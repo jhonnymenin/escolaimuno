@@ -1,39 +1,23 @@
 ---
-/**
- * Marca da Escola: aglomerado de pontos (anticorpo) + assinatura tipográfica.
- * Placeholder fiel à construção do book. Ver README para trocar pelo arquivo oficial.
- */
+import { Image } from 'astro:assets';
+import cor from '../../assets/logos/escola.png';
+import branco from '../../assets/logos/escola-branco.png';
+import { escola } from '../../content/escola';
+
 interface Props {
   variant?: 'light' | 'dark';
   class?: string;
+  /** Decorativa quando já existe texto equivalente ao lado. */
+  decorativa?: boolean;
+  eager?: boolean;
 }
-const { variant = 'dark', class: klass = '' } = Astro.props;
-const onNavy = variant === 'light';
-const textoForte = onNavy ? 'text-white' : 'text-navy';
-const textoFino = onNavy ? 'text-white/70' : 'text-ink2';
-const c = {
-  a: onNavy ? '#5CCFC9' : '#03A7BE',
-  b: onNavy ? '#2FA8EE' : '#0375C0',
-  c: onNavy ? '#FFFFFF' : '#032766',
-};
+const { variant = 'dark', class: klass = '', decorativa = false, eager = false } = Astro.props;
+const src = variant === 'light' ? branco : cor;
 ---
-<span class={`inline-flex items-center gap-2.5 ${klass}`}>
-  <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true" focusable="false" class="flex-none">
-    <path d="M17 20.5V13m0 0-5-5m5 5 5-5" stroke={c.c} stroke-width="2" stroke-linecap="round" />
-    <circle cx="17" cy="23.5" r="3.4" fill={c.b} />
-    <circle cx="10.4" cy="6.8" r="3.2" fill={c.a} />
-    <circle cx="23.6" cy="6.8" r="3.2" fill={c.b} />
-    <circle cx="5.2" cy="14.4" r="2.2" fill={c.a} opacity="0.85" />
-    <circle cx="28.8" cy="14.4" r="2.2" fill={c.b} opacity="0.85" />
-    <circle cx="8" cy="22.6" r="1.7" fill={c.a} opacity="0.6" />
-    <circle cx="26" cy="22.6" r="1.7" fill={c.b} opacity="0.6" />
-  </svg>
-  <span class="flex flex-col justify-center leading-none">
-    <span class={`font-display text-[0.5rem] font-semibold uppercase tracking-[0.17em] ${textoFino}`}>
-      Escola continuada de
-    </span>
-    <span class={`font-display text-[0.9rem] font-bold uppercase leading-[1.05] tracking-[-0.01em] ${textoForte}`}>
-      Doenças<br />Imunomediadas
-    </span>
-  </span>
-</span>
+<Image
+  src={src}
+  alt={decorativa ? '' : escola.nome}
+  height={88}
+  loading={eager ? 'eager' : 'lazy'}
+  class={`w-auto max-w-none ${klass}`}
+/>

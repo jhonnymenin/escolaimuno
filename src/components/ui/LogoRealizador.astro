@@ -1,73 +1,43 @@
 ---
-/**
- * Logos dos realizadores, desenhadas em SVG para manter a mesma altura visual
- * em qualquer contexto. São reconstruções tipográficas — substitua pelos
- * arquivos oficiais (ver README, "Trocar as logos").
- */
+import { Image } from 'astro:assets';
+import onCor from '../../assets/logos/on-educacao.png';
+import onBranco from '../../assets/logos/on-educacao-branco.png';
+import immCor from '../../assets/logos/immunogenic.png';
+import immBranco from '../../assets/logos/immunogenic-branco.png';
+import cliCor from '../../assets/logos/clinica-alergologica.png';
+import cliBranco from '../../assets/logos/clinica-alergologica-branco.png';
+
 interface Props {
   logo: 'on' | 'immunogenic' | 'alergologica';
+  nome: string;
   variant?: 'light' | 'dark';
   class?: string;
 }
-const { logo, variant = 'dark', class: klass = '' } = Astro.props;
-const claro = variant === 'light';
+const { logo, nome, variant = 'dark', class: klass = '' } = Astro.props;
 
-const tinta = claro ? '#FFFFFF' : '#0F1B2E';
-const fino = claro ? 'rgba(255,255,255,.7)' : '#7B8798';
-const laranja = claro ? '#FFFFFF' : '#F26522';
-const vermelho = claro ? '#FFFFFF' : '#E03A3E';
-const teal = claro ? '#FFFFFF' : '#3FAFA3';
+/**
+ * As três marcas têm proporções diferentes: a ON é uma palavra com assinatura,
+ * a Immunogenic tem o símbolo mais alto que o texto e a Clínica Alergológica é
+ * uma marca de duas linhas. O fator `otico` iguala a altura VISUAL, não a caixa.
+ *
+ * A altura final sai de --logo-h, definida por quem usa o componente, o que
+ * permite variá-la por breakpoint sem gerar outro arquivo. `renderH` é o limite
+ * físico de cada original — nenhum deles é ampliado.
+ */
+const marcas = {
+  on: { cor: onCor, branco: onBranco, otico: 0.95, renderH: 72 },
+  immunogenic: { cor: immCor, branco: immBranco, otico: 1, renderH: 73 },
+  alergologica: { cor: cliCor, branco: cliBranco, otico: 1.26, renderH: 48 },
+};
 
-const display = "'Sora Variable', Sora, system-ui, sans-serif";
-const sans = "'Inter Variable', Inter, system-ui, sans-serif";
-const serif = "Georgia, 'Times New Roman', serif";
+const m = marcas[logo];
+const src = variant === 'light' ? m.branco : m.cor;
 ---
-{
-  logo === 'on' && (
-    <svg class={klass} viewBox="-1 1.5 169 41.5" fill="none" role="img" aria-hidden="true" focusable="false">
-      <text x="0" y="28" font-family={display} font-size="27" font-weight="700" letter-spacing="-1.1" fill={tinta}>
-        O<tspan fill={laranja}>n</tspan>educação
-      </text>
-      <text x="2" y="41" font-family={sans} font-size="6.2" letter-spacing="1.9" fill={fino}>
-        CONECTANDO VOCÊ AO FUTURO
-      </text>
-    </svg>
-  )
-}
-{
-  logo === 'immunogenic' && (
-    <svg class={klass} viewBox="7.5 5 182.5 38.5" fill="none" role="img" aria-hidden="true" focusable="false">
-      <path
-        d="M17.4 6c4.3 4.9 6.5 9.2 6.5 13.2 0 4.9-3.4 8.3-7.7 8.3-3.6 0-5.9-2.2-5.9-5.3 0-2.8 1.6-4.9 4.3-7.3-.4 3.6.7 5.3 2.7 5.3 1.6 0 2.7-1.3 2.7-3.6 0-3-1.3-6.2-2.6-10.6Z"
-        fill={vermelho}
-      />
-      <path d="M14.4 25.6c-3.9 4.3-5.9 8.6-5.9 12.4 0 2.1.7 3.6 1.9 4.3" stroke={vermelho} stroke-width="2.4" stroke-linecap="round" />
-      <text x="30" y="31" font-family={sans} font-size="26" font-weight="500" letter-spacing="-0.8" fill={tinta}>
-        immunogenic
-      </text>
-    </svg>
-  )
-}
-{
-  logo === 'alergologica' && (
-    <svg class={klass} viewBox="2.4 8.4 181 33.8" fill="none" role="img" aria-hidden="true" focusable="false">
-      <circle cx="17" cy="23" r="13.6" stroke={teal} stroke-width="2" />
-      <path
-        d="M17 9.4c4.3 4.3 4.3 22.9 0 27.2M3.4 23h27.2M6 15.6c6.6 3.3 15.4 3.3 22 0M6 30.4c6.6-3.3 15.4-3.3 22 0"
-        stroke={teal}
-        stroke-width="1.5"
-        opacity=".65"
-      />
-      <path
-        d="M11.4 18.4c2.1-2.9 5.2-1.9 5.2.8 0-2.7 3.1-3.7 5.2-.8 2 2.7-.6 6.3-5.2 9.2-4.6-2.9-7.2-6.5-5.2-9.2Z"
-        fill={teal}
-      />
-      <text x="40" y="21" font-family={serif} font-size="9.8" letter-spacing="1.8" fill={claro ? 'rgba(255,255,255,.88)' : teal}>
-        CLÍNICA
-      </text>
-      <text x="40" y="37.5" font-family={serif} font-size="17.5" letter-spacing="0.4" fill={tinta}>
-        ALERGOLÓGICA
-      </text>
-    </svg>
-  )
-}
+<Image
+  src={src}
+  alt={nome}
+  height={m.renderH}
+  loading="lazy"
+  class={`w-auto max-w-none ${klass}`}
+  style={`height: calc(var(--logo-h, 1.75rem) * ${m.otico})`}
+/>

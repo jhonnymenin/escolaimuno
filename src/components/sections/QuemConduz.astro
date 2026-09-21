@@ -1,20 +1,33 @@
 ---
+import Foto from '../ui/Foto.astro';
 import LogoRealizador from '../ui/LogoRealizador.astro';
 import { escola } from '../../content/escola';
+import foto from '../../assets/fotos/centro-cirurgico-duotone-claro.jpg';
 const s = escola.quemConduz;
 ---
-<section id="quem-conduz" class="bg-white py-20 sm:py-28 lg:py-36">
+<section id="quem-conduz" class="bg-white py-16 sm:py-24 lg:py-32">
   <div class="shell">
     <h2 class="h2-fluid max-w-[18ch]">{s.titulo}</h2>
 
-    <ul class="mt-14 border-t border-line lg:mt-20">
+    <Foto
+      src={foto}
+      alt="Equipe cirúrgica em procedimento, com monitor e instrumental montado"
+      ratio="16/9"
+      position="center 42%"
+      sizes="(min-width: 1280px) 1120px, 100vw"
+      widths={[640, 1024, 1600]}
+      class="mt-10 lg:mt-14"
+    />
+
+    <ul
+      class="mt-12 border-t border-line [--logo-h:1.75rem] md:[--logo-h:2rem] lg:mt-16 lg:[--logo-h:2.25rem]"
+    >
       {
         s.realizadores.map((r) => (
           <li class="border-b border-line">
-            <div class="grid grid-cols-1 items-center gap-x-12 gap-y-5 py-9 lg:grid-cols-12 lg:py-11">
+            <div class="grid grid-cols-1 items-center gap-x-10 gap-y-5 py-8 lg:grid-cols-12 lg:gap-x-16 lg:py-11">
               <div class="lg:col-span-4">
-                <LogoRealizador logo={r.logo} class="h-9 w-auto" />
-                <span class="sr-only">{r.nome}</span>
+                <LogoRealizador logo={r.logo} nome={r.nome} />
               </div>
               <p class="measure-wide text-ink2 lg:col-span-8">{r.descricao}</p>
             </div>

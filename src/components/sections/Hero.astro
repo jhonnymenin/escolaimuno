@@ -1,58 +1,71 @@
 ---
+import { Image } from 'astro:assets';
 import Cta from '../ui/Cta.astro';
-import CelulasBg from '../ui/CelulasBg.astro';
 import LogosRealizadores from '../ui/LogosRealizadores.astro';
 import { escola } from '../../content/escola';
+import foto from '../../assets/fotos/vacinacao-duotone.jpg';
 ---
-<section class="relative overflow-hidden bg-navy text-white">
-  <!-- Campo de células sangrando pela direita -->
-  <div class="pointer-events-none absolute inset-y-0 right-0 w-full lg:w-[58%]" aria-hidden="true">
-    <CelulasBg class="h-full w-full" />
-    <div class="absolute inset-0 bg-gradient-to-r from-navy via-navy/85 to-navy/40 lg:via-navy/55 lg:to-transparent"></div>
-    <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-navy to-transparent"></div>
+<section class="relative isolate overflow-hidden bg-navy text-white">
+  <!-- A foto cobre o hero inteiro no mobile e só a faixa da direita no desktop. -->
+  <div class="absolute inset-0 lg:left-auto lg:w-[56%]" aria-hidden="true">
+    <Image
+      src={foto}
+      alt=""
+      widths={[420, 640, 1024, 1400]}
+      sizes="(min-width: 1024px) 56vw, 100vw"
+      loading="eager"
+      fetchpriority="high"
+      decoding="sync"
+      class="h-full w-full object-cover object-[68%_40%] lg:object-center"
+    />
+    <div class="absolute inset-0 bg-navy/80 lg:hidden"></div>
+    <div
+      class="absolute inset-0 hidden lg:block lg:bg-gradient-to-r lg:from-navy lg:via-navy/60 lg:to-navy/20"
+    >
+    </div>
+    <div class="absolute inset-x-0 top-0 hidden h-56 bg-gradient-to-b from-navy to-transparent lg:block"></div>
+    <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-navy to-transparent"></div>
   </div>
 
-  <div class="shell relative pb-16 pt-28 sm:pt-32 lg:pb-24 lg:pt-40">
-    <div class="grid grid-cols-1 gap-y-12 lg:grid-cols-12">
-      <div class="lg:col-span-8">
-        <p class="eyebrow text-agua">{escola.hero.selo}</p>
-        <p class="mt-6 text-[0.8rem] font-semibold uppercase tracking-[0.18em] text-ceu">
-          {escola.hero.contexto}
-        </p>
+  <div class="shell relative pb-14 pt-24 sm:pb-16 sm:pt-28 lg:pb-20 lg:pt-36">
+    <div class="lg:max-w-[62ch] xl:max-w-[68ch]">
+      <p class="eyebrow text-agua">{escola.hero.selo}</p>
+      <p class="mt-5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-ceu sm:text-[0.8rem]">
+        {escola.hero.contexto}
+      </p>
 
-        <h1 class="h1-fluid mt-4 [text-wrap:pretty] lg:max-w-none">{escola.hero.titulo}</h1>
+      <h1 class="h1-fluid mt-4 [text-wrap:pretty]">{escola.hero.titulo}</h1>
 
-        <p class="measure mt-7 text-white/75">{escola.hero.apoio}</p>
+      <p class="measure mt-6 text-white/75 sm:mt-7">{escola.hero.apoio}</p>
 
-        <dl class="mt-10 grid grid-cols-3 gap-x-5 gap-y-6 sm:gap-x-14 lg:max-w-2xl">
-          {
-            escola.hero.numeros.map((n) => (
-              <div class="border-t border-white/20 pt-3">
-                <dt class="sr-only">{n.rotulo}</dt>
-                <dd>
-                  <span class="font-display block text-4xl font-bold tracking-[-0.03em] text-agua sm:text-5xl">
-                    {n.valor}
-                  </span>
-                  <span class="mt-1.5 block max-w-[9rem] text-[0.8rem] leading-snug text-white/65 sm:text-sm">
-                    {n.rotulo}
-                  </span>
-                </dd>
-              </div>
-            ))
-          }
-        </dl>
+      <dl class="mt-9 grid grid-cols-3 gap-x-4 sm:mt-10 sm:max-w-xl sm:gap-x-10">
+        {
+          escola.hero.numeros.map((n) => (
+            <div class="border-t border-white/25 pt-3">
+              <dt class="sr-only">{n.rotulo}</dt>
+              <dd>
+                <span class="font-display block text-[2rem] font-bold leading-none tracking-[-0.03em] text-agua sm:text-5xl">
+                  {n.valor}
+                </span>
+                <span class="mt-2 block text-[0.75rem] leading-snug text-white/65 sm:max-w-[10rem] sm:text-sm">
+                  {n.rotulo}
+                </span>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
 
-        <div class="mt-11 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-7">
-          <Cta position="hero" label={escola.hero.cta} variant="agua" />
-          <p class="max-w-[16rem] text-sm leading-snug text-white/65">{escola.hero.ctaNota}</p>
-        </div>
+      <div class="mt-10 flex flex-col items-start gap-4 sm:mt-11 sm:flex-row sm:items-center sm:gap-7">
+        <Cta position="hero" label={escola.hero.cta} variant="agua" class="w-full sm:w-auto" />
+        <p class="max-w-[17rem] text-sm leading-snug text-white/65">{escola.hero.ctaNota}</p>
       </div>
     </div>
 
     <LogosRealizadores
       variant="light"
       label={escola.hero.realizacao}
-      class="mt-16 border-t border-white/15 pt-8 lg:mt-24"
+      class="mt-14 border-t border-white/15 pt-8 lg:mt-20"
     />
   </div>
 </section>

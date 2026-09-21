@@ -7,9 +7,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro",
+    "check": "astro check",
+    "media": "node scripts/prep-media.mjs",
     "og": "node scripts/gen-og.mjs",
-    "check": "astro check"
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",

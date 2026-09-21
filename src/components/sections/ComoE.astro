@@ -1,51 +1,67 @@
 ---
+import Foto from '../ui/Foto.astro';
 import { escola } from '../../content/escola';
 import { site } from '../../config/site';
+import foto from '../../assets/fotos/terapias-duotone.jpg';
 const s = escola.comoE;
 const linha = s.linha.map((p) => ({
   ...p,
   horaVisivel: 'horaCondicional' in p && p.horaCondicional && !site.flags.showEndTime ? '' : p.hora,
 }));
 ---
-<section id="como-e" class="bg-navy py-20 text-white sm:py-28 lg:py-36">
+<section id="como-e" class="bg-navy py-16 text-white sm:py-24 lg:py-32">
   <div class="shell">
     <div class="grid grid-cols-1 gap-x-16 gap-y-6 lg:grid-cols-12">
       <h2 class="h2-fluid max-w-[14ch] lg:col-span-6">{s.titulo}</h2>
       <p class="measure text-white/70 lg:col-span-6 lg:self-end">{s.apoio}</p>
     </div>
 
-    <ol class="mt-14 lg:mt-20" data-linha-tempo>
+    <ol class="mt-12 lg:mt-20" data-linha-tempo>
       {
         linha.map((p) => (
-          <li class="linha-item border-t border-white/15 last:border-b">
-            <div class="grid grid-cols-1 gap-x-8 gap-y-2 py-6 sm:grid-cols-12 sm:py-7">
-              <div class="flex items-center gap-4 sm:col-span-3 lg:col-span-2">
-                <span class="marcador h-2.5 w-2.5 flex-none rounded-full bg-white/25" aria-hidden="true" />
-                <span class="font-display text-lg font-bold tabular-nums tracking-[-0.02em] text-agua">
-                  {p.horaVisivel}
-                </span>
-              </div>
-              <h3 class="font-display text-lg font-bold tracking-[-0.01em] sm:col-span-4 sm:text-xl lg:col-span-4">
+          <li class="linha-item relative border-t border-white/15 last:border-b">
+            <span
+              class="marcador absolute left-0 top-[1.65rem] h-2.5 w-2.5 rounded-full bg-white/25 md:top-[2.3rem]"
+              aria-hidden="true"
+            />
+            <div class="grid grid-cols-1 gap-x-8 gap-y-1.5 py-5 pl-6 md:grid-cols-12 md:gap-y-2 md:py-7">
+              <span class="font-display text-lg font-bold tabular-nums tracking-[-0.02em] text-agua empty:hidden md:col-span-3 lg:col-span-2">
+                {p.horaVisivel}
+              </span>
+              <h3 class="font-display text-lg font-bold tracking-[-0.01em] md:col-span-4 md:text-xl">
                 {p.titulo}
               </h3>
-              <p class="pl-[1.6rem] text-[0.95rem] text-white/65 sm:col-span-5 sm:pl-0 lg:col-span-6">
-                {p.descricao}
-              </p>
+              <p class="text-[0.95rem] text-white/65 md:col-span-5 lg:col-span-6">{p.descricao}</p>
             </div>
           </li>
         ))
       }
     </ol>
 
-    <div class="mt-16 grid grid-cols-1 gap-x-12 gap-y-10 sm:grid-cols-3 lg:mt-20">
-      {
-        s.principios.map((p) => (
-          <div>
-            <h3 class="h3-fluid text-agua">{p.titulo}</h3>
-            <p class="mt-2.5 text-[0.95rem] leading-relaxed text-white/65">{p.descricao}</p>
-          </div>
-        ))
-      }
+    <div class="mt-14 grid grid-cols-1 gap-x-12 gap-y-10 lg:mt-20 lg:grid-cols-12 lg:gap-x-16">
+      <div class="grid grid-cols-1 gap-x-10 gap-y-8 sm:grid-cols-3 lg:col-span-7 lg:grid-cols-1 lg:gap-y-9 lg:self-center">
+        {
+          s.principios.map((p) => (
+            <div>
+              <h3 class="h3-fluid text-agua">{p.titulo}</h3>
+              <p class="measure mt-2.5 text-[0.95rem] leading-relaxed text-white/65">{p.descricao}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="lg:col-span-5">
+        <Foto
+          src={foto}
+          alt="Mão com comprimidos e cápsulas de diferentes terapias"
+          ratio="5/4"
+          position="center 38%"
+          sizes="(min-width: 1024px) 34vw, 100vw"
+          widths={[480, 720, 960]}
+        >
+          <div class="absolute inset-0 bg-navy/50" aria-hidden="true"></div>
+        </Foto>
+      </div>
     </div>
   </div>
 </section>

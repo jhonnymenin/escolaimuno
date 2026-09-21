@@ -9,5 +9,5 @@ export default defineConfig({
   output: 'static',
   integrations: [sitemap()],
   vite: { plugins: [tailwindcss()] },
-  build: { inlineStylesheets: 'auto' },
+  build: { inlineStylesheets: 'always' },
 });

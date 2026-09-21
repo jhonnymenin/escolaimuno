@@ -8,10 +8,14 @@ import { escola } from '../../content/escola';
   data-header
   class="fixed inset-x-0 top-0 z-50 border-b border-transparent transition-colors duration-200"
 >
-  <div class="shell flex h-16 items-center justify-between gap-4">
-    <a href="#topo" class="flex items-center" aria-label={escola.nome}>
-      <span class="logo-hero"><LogoEscola variant="light" /></span>
-      <span class="logo-scrolled" style="display:none"><LogoEscola variant="dark" /></span>
+  <div class="shell flex h-16 items-center justify-between gap-4 sm:h-20">
+    <a href="#topo" class="flex items-center py-1" aria-label={escola.nome}>
+      <span class="logo-hero flex">
+        <LogoEscola variant="light" decorativa eager class="h-9 sm:h-11" />
+      </span>
+      <span class="logo-scrolled hidden">
+        <LogoEscola variant="dark" decorativa eager class="h-9 sm:h-11" />
+      </span>
     </a>
     <Cta position="header" label={escola.header.cta} variant="texto" class="text-white" />
   </div>
@@ -26,7 +30,7 @@ import { escola } from '../../content/escola';
     display: none;
   }
   [data-header].is-scrolled .logo-scrolled {
-    display: inline-flex !important;
+    display: flex;
   }
   [data-header].is-scrolled :global(a[data-cta]) {
     color: var(--color-navy);
@@ -36,9 +40,7 @@ import { escola } from '../../content/escola';
 <script>
   const header = document.querySelector<HTMLElement>('[data-header]');
   if (header) {
-    const atualizar = () => {
-      header.classList.toggle('is-scrolled', window.scrollY > 80);
-    };
+    const atualizar = () => header.classList.toggle('is-scrolled', window.scrollY > 80);
     atualizar();
     window.addEventListener('scroll', atualizar, { passive: true });
   }

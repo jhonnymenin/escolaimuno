@@ -1,23 +1,35 @@
 ---
+import { Image } from 'astro:assets';
 import Cta from '../ui/Cta.astro';
-import CelulasBg from '../ui/CelulasBg.astro';
 import { escola } from '../../content/escola';
+import foto from '../../assets/fotos/pesquisadora-duotone.jpg';
 const s = escola.inscricao;
 ---
-<section id="inscricao" data-secao-final class="relative overflow-hidden bg-navy py-20 text-white sm:py-28 lg:py-36">
-  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
-    <CelulasBg class="h-full w-full" intensidade={0.55} />
-    <div class="absolute inset-0 bg-navy/75"></div>
+<section
+  id="inscricao"
+  data-secao-final
+  class="relative isolate overflow-hidden bg-navy py-16 text-white sm:py-24 lg:py-32"
+>
+  <div class="absolute inset-0" aria-hidden="true">
+    <Image
+      src={foto}
+      alt=""
+      widths={[640, 1024, 1600]}
+      sizes="100vw"
+      loading="lazy"
+      class="h-full w-full object-cover object-[50%_22%] lg:object-[26%_22%]"
+    />
+    <div class="absolute inset-0 bg-navy/85"></div>
   </div>
 
   <div class="shell relative">
     <p class="eyebrow text-agua">{s.selo}</p>
-    <div class="mt-6 grid grid-cols-1 gap-x-16 gap-y-6 lg:grid-cols-12">
+    <div class="mt-5 grid grid-cols-1 gap-x-10 gap-y-5 lg:grid-cols-12 lg:gap-x-16">
       <h2 class="h2-fluid max-w-[13ch] lg:col-span-6">{s.titulo}</h2>
-      <p class="measure text-white/70 lg:col-span-6 lg:self-end">{s.apoio}</p>
+      <p class="measure text-white/75 lg:col-span-6 lg:self-end">{s.apoio}</p>
     </div>
 
-    <ol class="mt-14 grid grid-cols-1 gap-x-12 gap-y-10 sm:grid-cols-3 lg:mt-20">
+    <ol class="mt-12 grid grid-cols-1 gap-x-10 gap-y-8 sm:grid-cols-3 sm:gap-x-12 lg:mt-16">
       {
         s.passos.map((p) => (
           <li class="border-t border-white/25 pt-5">
@@ -25,14 +37,14 @@ const s = escola.inscricao;
               {p.numero}
             </span>
             <h3 class="h3-fluid mt-3">{p.titulo}</h3>
-            <p class="mt-2.5 text-[0.95rem] leading-relaxed text-white/65">{p.descricao}</p>
+            <p class="mt-2.5 text-[0.95rem] leading-relaxed text-white/70">{p.descricao}</p>
           </li>
         ))
       }
     </ol>
 
-    <div class="mt-14 lg:mt-20">
-      <Cta position="final" label={s.cta} variant="agua" />
+    <div class="mt-12 lg:mt-16">
+      <Cta position="final" label={s.cta} variant="agua" class="w-full sm:w-auto" />
     </div>
   </div>
 </section>

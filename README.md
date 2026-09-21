@@ -22,6 +22,8 @@ Outros comandos:
 |---|---|
 | `npm run build` | Gera o site em `dist/` |
 | `npm run preview` | Serve `dist/` localmente |
+| `npm run check` | Checagem de tipos dos arquivos `.astro` |
+| `npm run media` | Regera `src/assets/` a partir dos originais em `media/` |
 | `npm run og` | Regera `src/assets/img/og.jpg` e `public/favicon.svg` |
 
 ---
@@ -34,7 +36,7 @@ do projeto na Vercel. O arquivo de referência é [`.env.example`](.env.example)
 | Variável | Uso | Obrigatória |
 |---|---|---|
 | `PUBLIC_CTA_URL` | Link de inscrição (produto na plataforma EAD da ON). **Se vazio, o CTA cai para o WhatsApp.** | não |
-| `PUBLIC_WHATSAPP` | Número com DDI, só dígitos (ex.: `5519999999999`). Usado quando `PUBLIC_CTA_URL` está vazio | sim, se não houver `PUBLIC_CTA_URL` |
+| `PUBLIC_WHATSAPP` | Número com DDI, só dígitos (hoje `5511970687422`). Usado quando `PUBLIC_CTA_URL` está vazio | sim, se não houver `PUBLIC_CTA_URL` |
 | `PUBLIC_SPONSOR_CONTACT` | E-mail ou link para empresas interessadas em patrocínio. Se vazio, o bloco some do rodapé | não |
 | `PUBLIC_GTM_ID` | Google Tag Manager (`GTM-XXXXXXX`). Se vazio, nada é carregado | não |
 | `PUBLIC_META_PIXEL_ID` | Meta Pixel. Se vazio, nada é carregado | não |
@@ -86,14 +88,20 @@ O link **Adicionar à agenda** de cada encontro gera um `.ics` no próprio naveg
 ## Organização
 
 ```
+media/
+  fotos/                   Fotos originais, em alta. Fonte de verdade.
+  logos/                   Logos originais (PNG com transparência).
 src/
   content/escola.ts        TODO o texto e os dados. Tipado. Nenhum componente tem copy.
   config/site.ts           Links, contatos, IDs e flags, lidos de import.meta.env
   components/sections/     Uma seção por arquivo, na ordem da página
-  components/ui/           Peças pequenas: Cta, Icon, DotGrid, Silhueta, logos
+  components/ui/           Peças pequenas: Cta, Foto, Icon, DotGrid, logos
+  assets/fotos/            Derivadas de media/fotos por `npm run media`
+  assets/logos/            Derivadas de media/logos por `npm run media`
   assets/img/og.jpg        Imagem de Open Graph (1200×630)
   layouts/Base.astro       head, SEO, JSON-LD (EventSeries + 8 Event), tracking
   styles/global.css        Tokens de cor e tipografia, utilitários de layout
+scripts/prep-media.mjs     Gera src/assets/ a partir de media/
 scripts/gen-og.mjs         Gera og.jpg e favicon.svg
 ```
 
@@ -113,31 +121,49 @@ scripts/gen-og.mjs         Gera og.jpg e favicon.svg
 
 Tipografia: **Sora** 700 nos títulos (tracking −0,02em, line-height 1,05, escala fluida),
 **Inter** 16–18px no texto. Fontes self-hosted via `@fontsource-variable` — não há
-requisição ao Google Fonts.
+requisição ao Google Fonts. A Sora é precarregada porque a `h1` é o elemento de maior
+pintura da página.
 
 ---
 
-## Trocar as logos e as fotos
+## Fotos e logos
 
-Dois conjuntos de arte são **reconstruções**, feitas em SVG porque os arquivos oficiais não
-estavam disponíveis. Ambos estão isolados em um único componente cada:
+Os originais ficam em `media/` e **nunca são usados direto pela página**.
+`npm run media` gera tudo o que `src/assets/` precisa:
 
-- **Logos dos realizadores** — [`src/components/ui/LogoRealizador.astro`](src/components/ui/LogoRealizador.astro).
-  Substitua o conteúdo de cada bloco pelo SVG oficial, mantendo:
-  - a mesma proporção de `viewBox` para as três (elas são renderizadas com altura fixa,
-    `h-7` no hero e no rodapé, `h-9` em *Quem conduz*, e largura automática);
-  - a variante `light`, em branco, para uso sobre navy;
-  - a ordem **ON Educação → Immunogenic → Clínica Alergológica**, definida em
-    `escola.quemConduz.realizadores`.
-- **Marca da Escola** — [`src/components/ui/LogoEscola.astro`](src/components/ui/LogoEscola.astro).
-- **Fundo de células** do hero e da seção de inscrição —
-  [`src/components/ui/CelulasBg.astro`](src/components/ui/CelulasBg.astro).
-  Para usar a fotografia duotone original, troque o `<svg>` por um `<Image />` de
-  `astro:assets`, apontando para o arquivo em `src/assets/img/`, com `width`/`height`
-  explícitos e `loading="eager"` no hero (`lazy` na inscrição). As camadas de
-  escurecimento por cima já estão no componente que o consome.
-- **Imagem de Open Graph** — gerada por `npm run og`. Para usar uma arte final, apague o
-  script do fluxo e coloque o arquivo em `src/assets/img/og.jpg` (1200×630).
+**Fotos** — de cada original saem três arquivos:
+
+| Arquivo | Onde entra |
+|---|---|
+| `nome.jpg` | versão natural, redimensionada (hoje não usada, fica disponível) |
+| `nome-duotone.jpg` | duotone escuro (`#010C26` → `#26689E`), para as seções navy |
+| `nome-duotone-claro.jpg` | duotone claro (`#083474` → `#E2EEFA`), para as seções brancas |
+
+Distribuição atual: `vacinacao` no hero, `seringa-frasco` em *Por que existe*,
+`terapias` em *Como é o encontro*, `centro-cirurgico` em *Quem conduz* e
+`pesquisadora` na seção de inscrição.
+
+Para trocar uma foto, substitua o arquivo em `media/fotos/` **mantendo o nome** e rode
+`npm run media`. Para acrescentar outra, coloque em `media/fotos/`, rode o script e
+importe a variante certa na seção.
+
+**Logos** — de cada original saem duas versões: a colorida e uma branca (mesmo recorte,
+tudo pintado de branco) para uso sobre navy. Os arquivos já vêm aparados na
+transparência, então basta trocar o PNG em `media/logos/` e rodar `npm run media`.
+
+As três logos de realizador aparecem sempre na **mesma altura visual**, não na mesma
+caixa: [`LogoRealizador.astro`](src/components/ui/LogoRealizador.astro) guarda um fator
+óptico por marca e a altura final vem da variável CSS `--logo-h`, definida por quem usa
+o componente — o que permite mudá-la por breakpoint sem gerar outro arquivo. A ordem
+**ON Educação → Immunogenic → Clínica Alergológica** vem de
+`escola.quemConduz.realizadores`.
+
+> Os originais da Clínica Alergológica (263×48) e da Immunogenic (340×73) são pequenos.
+> Eles servem nos tamanhos em que aparecem, mas se houver versão vetorial ou em alta,
+> vale substituir: é só trocar o arquivo em `media/logos/` e rodar `npm run media`.
+
+A imagem de Open Graph é gerada por `npm run og`. Para usar uma arte final, coloque o
+arquivo em `src/assets/img/og.jpg` (1200×630) e pare de rodar o script.
 
 ---
 
@@ -148,8 +174,7 @@ A página foi montada para ser clonada trocando dois lugares:
 1. **`src/content/escola.ts`** — todo o texto, os oito encontros, o público, os
    realizadores, o local, os horários e os dados de SEO. Os tipos (`Encontro`,
    `Realizador`, `TemaIcone`) garantem que nada fique faltando.
-2. **`src/assets/`** e os componentes de marca citados acima — logos, imagem de OG
-   e, se for o caso, fotos.
+2. **`media/`** — as fotos e as logos da outra escola, seguido de `npm run media`.
 
 Além disso:
 
@@ -168,10 +193,10 @@ o lugar é `content/escola.ts`.
 
 Estado verificado nesta versão, com `npm run preview` servindo `dist/`:
 
-- Lighthouse **100/100/100/100** (performance, acessibilidade, boas práticas, SEO),
-  em mobile e desktop.
-- Sem erros de console; build limpo.
-- Conferido em 375px, 768px e 1440px.
+- Lighthouse: **99/100/100/100** em mobile e **100/100/100/100** em desktop
+  (performance, acessibilidade, boas práticas, SEO).
+- Sem erros de console; build e `astro check` limpos.
+- Conferido em 375px, 768px, 1024px e 1440px, sem rolagem horizontal em nenhum.
 - Contraste AA em todo o texto, foco visível, um único `h1`, HTML semântico e
   `prefers-reduced-motion` respeitado — com ele ligado, a cascata do grid de 100 pontos
   e o acendimento da linha do tempo aparecem prontos, sem animação.

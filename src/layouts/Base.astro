@@ -1,6 +1,8 @@
 ---
 import '@fontsource-variable/sora';
 import '@fontsource-variable/inter';
+// A h1 é o elemento de maior pintura da página; precarregar a Sora adianta o LCP.
+import soraLatin from '@fontsource-variable/sora/files/sora-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import { escola } from '../content/escola';
 import { site } from '../config/site';
@@ -94,6 +96,7 @@ const jsonLd = {
     <meta name="twitter:description" content={escola.seo.description} />
     <meta name="twitter:image" content={ogUrl} />
 
+    <link rel="preload" as="font" type="font/woff2" href={soraLatin} crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />

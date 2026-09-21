@@ -8,22 +8,34 @@ interface Props {
   class?: string;
 }
 const { variant = 'dark', label, class: klass = '' } = Astro.props;
-const corLabel = variant === 'light' ? 'text-white/60' : 'text-ink2';
-const corLinha = variant === 'light' ? 'bg-white/20' : 'bg-line';
+const claro = variant === 'light';
 ---
 <div class={klass}>
   {
     label && (
-      <p class={`text-[0.68rem] font-semibold uppercase tracking-[0.18em] ${corLabel}`}>{label}</p>
+      <p
+        class:list={[
+          'text-[0.68rem] font-semibold uppercase tracking-[0.18em]',
+          claro ? 'text-white/60' : 'text-ink2',
+        ]}
+      >
+        {label}
+      </p>
     )
   }
-  <ul class="mt-5 flex flex-wrap items-center gap-x-7 gap-y-6 sm:gap-x-10">
+  <ul
+    class="mt-5 flex flex-wrap items-center gap-x-8 gap-y-6 [--logo-h:1.5rem] sm:gap-x-10 md:[--logo-h:1.75rem] lg:gap-x-12"
+  >
     {
       escola.quemConduz.realizadores.map((r, i) => (
-        <li class="flex items-center gap-7 sm:gap-10">
-          {i > 0 && <span class={`hidden h-7 w-px sm:block ${corLinha}`} aria-hidden="true" />}
-          <LogoRealizador logo={r.logo} variant={variant} class="h-7 w-auto" />
-          <span class="sr-only">{r.nome}</span>
+        <li class="flex items-center gap-8 sm:gap-10 lg:gap-12">
+          {i > 0 && (
+            <span
+              class:list={['hidden h-8 w-px sm:block', claro ? 'bg-white/20' : 'bg-line']}
+              aria-hidden="true"
+            />
+          )}
+          <LogoRealizador logo={r.logo} nome={r.nome} variant={variant} />
         </li>
       ))
     }
