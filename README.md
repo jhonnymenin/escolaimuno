@@ -36,7 +36,7 @@ do projeto na Vercel. O arquivo de referência é [`.env.example`](.env.example)
 | Variável | Uso | Obrigatória |
 |---|---|---|
 | `PUBLIC_CTA_URL` | Link de inscrição (produto na plataforma EAD da ON). **Se vazio, o CTA cai para o WhatsApp.** | não |
-| `PUBLIC_WHATSAPP` | Número com DDI, só dígitos (hoje `5511970687422`). Usado quando `PUBLIC_CTA_URL` está vazio | sim, se não houver `PUBLIC_CTA_URL` |
+| `PUBLIC_WHATSAPP` | Número com DDI, só dígitos. Usado quando `PUBLIC_CTA_URL` está vazio. Tem padrão embutido (`5511970687422`) para o CTA não ficar morto num deploy sem variáveis | não |
 | `PUBLIC_SPONSOR_CONTACT` | E-mail ou link para empresas interessadas em patrocínio. Se vazio, o bloco some do rodapé | não |
 | `PUBLIC_GTM_ID` | Google Tag Manager (`GTM-XXXXXXX`). Se vazio, nada é carregado | não |
 | `PUBLIC_META_PIXEL_ID` | Meta Pixel. Se vazio, nada é carregado | não |

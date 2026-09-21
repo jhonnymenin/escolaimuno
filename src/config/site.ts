@@ -10,8 +10,11 @@ export const site = {
   /** Link de inscrição. Vazio => o CTA cai para o WhatsApp. */
   ctaUrl: str(env.PUBLIC_CTA_URL),
 
-  /** Número com DDI, só dígitos. */
-  whatsapp: str(env.PUBLIC_WHATSAPP).replace(/\D/g, ''),
+  /**
+   * Número com DDI, só dígitos. O padrão existe para o CTA nunca ficar morto
+   * num deploy sem variáveis; PUBLIC_WHATSAPP sobrescreve.
+   */
+  whatsapp: str(env.PUBLIC_WHATSAPP).replace(/\D/g, '') || '5511970687422',
 
   /** E-mail ou link para empresas interessadas em patrocínio. */
   sponsorContact: str(env.PUBLIC_SPONSOR_CONTACT),
