@@ -1,0 +1,58 @@
+---
+import Cta from '../ui/Cta.astro';
+import CelulasBg from '../ui/CelulasBg.astro';
+import LogosRealizadores from '../ui/LogosRealizadores.astro';
+import { escola } from '../../content/escola';
+---
+<section class="relative overflow-hidden bg-navy text-white">
+  <!-- Campo de células sangrando pela direita -->
+  <div class="pointer-events-none absolute inset-y-0 right-0 w-full lg:w-[58%]" aria-hidden="true">
+    <CelulasBg class="h-full w-full" />
+    <div class="absolute inset-0 bg-gradient-to-r from-navy via-navy/85 to-navy/40 lg:via-navy/55 lg:to-transparent"></div>
+    <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-navy to-transparent"></div>
+  </div>
+
+  <div class="shell relative pb-16 pt-28 sm:pt-32 lg:pb-24 lg:pt-40">
+    <div class="grid grid-cols-1 gap-y-12 lg:grid-cols-12">
+      <div class="lg:col-span-8">
+        <p class="eyebrow text-agua">{escola.hero.selo}</p>
+        <p class="mt-6 text-[0.8rem] font-semibold uppercase tracking-[0.18em] text-ceu">
+          {escola.hero.contexto}
+        </p>
+
+        <h1 class="h1-fluid mt-4 [text-wrap:pretty] lg:max-w-none">{escola.hero.titulo}</h1>
+
+        <p class="measure mt-7 text-white/75">{escola.hero.apoio}</p>
+
+        <dl class="mt-10 grid grid-cols-3 gap-x-5 gap-y-6 sm:gap-x-14 lg:max-w-2xl">
+          {
+            escola.hero.numeros.map((n) => (
+              <div class="border-t border-white/20 pt-3">
+                <dt class="sr-only">{n.rotulo}</dt>
+                <dd>
+                  <span class="font-display block text-4xl font-bold tracking-[-0.03em] text-agua sm:text-5xl">
+                    {n.valor}
+                  </span>
+                  <span class="mt-1.5 block max-w-[9rem] text-[0.8rem] leading-snug text-white/65 sm:text-sm">
+                    {n.rotulo}
+                  </span>
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <div class="mt-11 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-7">
+          <Cta position="hero" label={escola.hero.cta} variant="agua" />
+          <p class="max-w-[16rem] text-sm leading-snug text-white/65">{escola.hero.ctaNota}</p>
+        </div>
+      </div>
+    </div>
+
+    <LogosRealizadores
+      variant="light"
+      label={escola.hero.realizacao}
+      class="mt-16 border-t border-white/15 pt-8 lg:mt-24"
+    />
+  </div>
+</section>

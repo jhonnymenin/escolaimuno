@@ -1,0 +1,38 @@
+---
+import Cta from '../ui/Cta.astro';
+import CelulasBg from '../ui/CelulasBg.astro';
+import { escola } from '../../content/escola';
+const s = escola.inscricao;
+---
+<section id="inscricao" data-secao-final class="relative overflow-hidden bg-navy py-20 text-white sm:py-28 lg:py-36">
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <CelulasBg class="h-full w-full" intensidade={0.55} />
+    <div class="absolute inset-0 bg-navy/75"></div>
+  </div>
+
+  <div class="shell relative">
+    <p class="eyebrow text-agua">{s.selo}</p>
+    <div class="mt-6 grid grid-cols-1 gap-x-16 gap-y-6 lg:grid-cols-12">
+      <h2 class="h2-fluid max-w-[13ch] lg:col-span-6">{s.titulo}</h2>
+      <p class="measure text-white/70 lg:col-span-6 lg:self-end">{s.apoio}</p>
+    </div>
+
+    <ol class="mt-14 grid grid-cols-1 gap-x-12 gap-y-10 sm:grid-cols-3 lg:mt-20">
+      {
+        s.passos.map((p) => (
+          <li class="border-t border-white/25 pt-5">
+            <span class="font-display block text-sm font-bold tabular-nums tracking-[0.1em] text-agua">
+              {p.numero}
+            </span>
+            <h3 class="h3-fluid mt-3">{p.titulo}</h3>
+            <p class="mt-2.5 text-[0.95rem] leading-relaxed text-white/65">{p.descricao}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="mt-14 lg:mt-20">
+      <Cta position="final" label={s.cta} variant="agua" />
+    </div>
+  </div>
+</section>

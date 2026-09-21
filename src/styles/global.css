@@ -1,0 +1,144 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-navy: #032766;
+  --color-azul: #0375c0;
+  --color-ciano: #03a7be;
+  --color-ceu: #2fa8ee;
+  --color-agua: #5ccfc9;
+  --color-mist: #f2f6fa;
+  --color-ink2: #5b6b82;
+  --color-line: #dce4ee;
+
+  /* Variantes legíveis (AA) para texto pequeno sobre fundo claro. */
+  --color-ciano-texto: #026b7a;
+  --color-azul-texto: #0369ab;
+
+  --font-display: 'Sora Variable', 'Sora', system-ui, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
+
+  --text-h1: clamp(2.5rem, 6vw, 5rem);
+  --text-h2: clamp(1.875rem, 4vw, 3.25rem);
+  --text-h3: clamp(1.25rem, 2vw, 1.5rem);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-navy);
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  @media (min-width: 768px) {
+    body {
+      font-size: 1.125rem;
+    }
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-ciano);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--color-agua);
+    color: var(--color-navy);
+  }
+}
+
+@utility h1-fluid {
+  font-size: var(--text-h1);
+}
+
+@utility h2-fluid {
+  font-size: var(--text-h2);
+}
+
+@utility h3-fluid {
+  font-size: var(--text-h3);
+  line-height: 1.2;
+}
+
+/* Coluna de leitura: 60–65 caracteres. */
+@utility measure {
+  max-width: 34rem;
+}
+
+@utility measure-wide {
+  max-width: 44rem;
+}
+
+@utility shell {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 78rem;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .shell {
+    padding-inline: 2.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .shell {
+    padding-inline: 3.5rem;
+  }
+}
+
+/* Rótulo de seção. Usado só onde orienta. */
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.eyebrow::before {
+  content: '';
+  width: 1.75rem;
+  height: 2px;
+  background: currentColor;
+  flex: none;
+}

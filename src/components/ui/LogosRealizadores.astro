@@ -1,0 +1,31 @@
+---
+import LogoRealizador from './LogoRealizador.astro';
+import { escola } from '../../content/escola';
+
+interface Props {
+  variant?: 'light' | 'dark';
+  label?: string;
+  class?: string;
+}
+const { variant = 'dark', label, class: klass = '' } = Astro.props;
+const corLabel = variant === 'light' ? 'text-white/60' : 'text-ink2';
+const corLinha = variant === 'light' ? 'bg-white/20' : 'bg-line';
+---
+<div class={klass}>
+  {
+    label && (
+      <p class={`text-[0.68rem] font-semibold uppercase tracking-[0.18em] ${corLabel}`}>{label}</p>
+    )
+  }
+  <ul class="mt-5 flex flex-wrap items-center gap-x-7 gap-y-6 sm:gap-x-10">
+    {
+      escola.quemConduz.realizadores.map((r, i) => (
+        <li class="flex items-center gap-7 sm:gap-10">
+          {i > 0 && <span class={`hidden h-7 w-px sm:block ${corLinha}`} aria-hidden="true" />}
+          <LogoRealizador logo={r.logo} variant={variant} class="h-7 w-auto" />
+          <span class="sr-only">{r.nome}</span>
+        </li>
+      ))
+    }
+  </ul>
+</div>

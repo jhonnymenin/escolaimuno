@@ -1,0 +1,195 @@
+---
+import '@fontsource-variable/sora';
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+import { escola } from '../content/escola';
+import { site } from '../config/site';
+import ogImage from '../assets/img/og.jpg';
+
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const ogUrl = new URL(ogImage.src, site.url).href;
+
+const inicio = `${escola.horario.inicio}:00-03:00`;
+const fim = `${escola.horario.fim}:00-03:00`;
+
+const organizadores = escola.quemConduz.realizadores.map((r) => ({
+  '@type': 'Organization',
+  name: r.nome,
+}));
+
+const local = {
+  '@type': 'Place',
+  name: escola.local.nome,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: escola.local.cidade,
+    addressRegion: escola.local.uf,
+    addressCountry: escola.local.pais,
+  },
+};
+
+// GTM e Pixel só carregam se as variáveis existirem, de forma adiada
+// (primeira interação ou 3s).
+const trackingScript =
+  site.gtmId || site.metaPixelId
+    ? `(function(){var gtmId=${JSON.stringify(site.gtmId)};var pixelId=${JSON.stringify(
+        site.metaPixelId
+      )};var carregado=false;function carregar(){if(carregado)return;carregado=true;if(gtmId){window.dataLayer=window.dataLayer||[];window.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtm.js?id='+gtmId;document.head.appendChild(s);}if(pixelId){!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');window.fbq('init',pixelId);window.fbq('track','PageView');}}['pointerdown','keydown','scroll','touchstart'].forEach(function(ev){window.addEventListener(ev,carregar,{once:true,passive:true})});setTimeout(carregar,3000);})();`
+    : '';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'EventSeries',
+  name: `${escola.nome} — Temporada ${escola.temporada}`,
+  description: escola.seo.description,
+  url: canonical,
+  image: [ogUrl],
+  startDate: `${escola.encontros[0].data}T${inicio}`,
+  endDate: `${escola.encontros[escola.encontros.length - 1].data}T${fim}`,
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  eventStatus: 'https://schema.org/EventScheduled',
+  location: local,
+  organizer: organizadores,
+  maximumAttendeeCapacity: 100,
+  inLanguage: 'pt-BR',
+  subEvent: escola.encontros.map((e) => ({
+    '@type': 'Event',
+    name: `Encontro ${e.numero} — ${e.tema}`,
+    startDate: `${e.data}T${inicio}`,
+    endDate: `${e.data}T${fim}`,
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    eventStatus: 'https://schema.org/EventScheduled',
+    location: local,
+    organizer: organizadores,
+    about: e.especialidades.join(', '),
+    inLanguage: 'pt-BR',
+    superEvent: { '@type': 'EventSeries', name: `${escola.nome} — Temporada ${escola.temporada}` },
+  })),
+};
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{escola.seo.title}</title>
+    <meta name="description" content={escola.seo.description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#032766" />
+    <meta name="robots" content="index, follow" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content={escola.nome} />
+    <meta property="og:title" content={escola.seo.title} />
+    <meta property="og:description" content={escola.seo.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={escola.seo.ogAlt} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={escola.seo.title} />
+    <meta name="twitter:description" content={escola.seo.description} />
+    <meta name="twitter:image" content={ogUrl} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+  </head>
+  <body>
+    <a
+      href="#conteudo"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-[4px] focus:bg-navy focus:px-4 focus:py-3 focus:text-white"
+    >
+      Ir para o conteúdo
+    </a>
+    <slot />
+
+    <script>
+      // ——— UTM e IDs de anúncio: capturar na chegada e repassar no CTA ———
+      const CHAVE = 'ecdi:attr';
+      const CAMPOS = [
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_content',
+        'utm_term',
+        'fbclid',
+        'gclid',
+      ];
+
+      const ler = (): Record<string, string> => {
+        try {
+          return JSON.parse(sessionStorage.getItem(CHAVE) || '{}');
+        } catch {
+          return {};
+        }
+      };
+
+      const capturar = (): Record<string, string> => {
+        const atual = ler();
+        const params = new URLSearchParams(window.location.search);
+        let mudou = false;
+        for (const campo of CAMPOS) {
+          const v = params.get(campo);
+          if (v) {
+            atual[campo] = v;
+            mudou = true;
+          }
+        }
+        if (mudou) {
+          try {
+            sessionStorage.setItem(CHAVE, JSON.stringify(atual));
+          } catch {
+            /* modo privado */
+          }
+        }
+        return atual;
+      };
+
+      const attr = capturar();
+      const temAttr = Object.keys(attr).length > 0;
+
+      const origemTexto = () =>
+        Object.entries(attr)
+          .map(([k, v]) => `${k}=${v}`)
+          .join(', ');
+
+      // ——— Reescrever os CTAs com a atribuição ———
+      const ctas = document.querySelectorAll<HTMLAnchorElement>('a[data-cta]');
+      if (temAttr) {
+        ctas.forEach((a) => {
+          const isWhatsapp = a.dataset.ctaWhatsapp === 'true';
+          try {
+            const url = new URL(a.href, window.location.origin);
+            if (isWhatsapp) {
+              const base = url.searchParams.get('text') || '';
+              url.searchParams.set('text', `${base} (origem: ${origemTexto()})`);
+            } else {
+              Object.entries(attr).forEach(([k, v]) => url.searchParams.set(k, v));
+            }
+            a.href = url.toString();
+          } catch {
+            /* href relativo, como #inscricao */
+          }
+        });
+      }
+
+      // ——— Evento cta_click ———
+      ctas.forEach((a) => {
+        a.addEventListener('click', () => {
+          const position = a.dataset.ctaPosition || 'desconhecida';
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({ event: 'cta_click', cta_position: position });
+          if (typeof window.fbq === 'function') {
+            window.fbq('trackCustom', 'cta_click', { cta_position: position });
+          }
+        });
+      });
+    </script>
+
+    {trackingScript && <script is:inline set:html={trackingScript} />}
+  </body>
+</html>

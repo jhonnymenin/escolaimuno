@@ -1,0 +1,34 @@
+---
+import { escola } from '../../content/escola';
+import { ctaHref, site } from '../../config/site';
+
+interface Props {
+  /** Posição, enviada no evento cta_click. */
+  position: 'hero' | 'sticky' | 'final' | 'header';
+  label: string;
+  variant?: 'agua' | 'navy' | 'texto';
+  class?: string;
+}
+const { position, label, variant = 'agua', class: klass = '' } = Astro.props;
+
+const href = ctaHref(escola.whatsappMensagem);
+const isWhatsapp = !site.ctaUrl;
+
+const base =
+  'inline-flex items-center justify-center rounded-[4px] font-semibold transition-colors duration-150';
+const estilos = {
+  agua: 'bg-agua text-navy px-7 py-4 text-base hover:bg-white',
+  navy: 'bg-navy text-white px-7 py-4 text-base hover:bg-azul',
+  texto:
+    'text-sm font-semibold underline underline-offset-[6px] decoration-1 decoration-agua hover:decoration-2 px-0 py-1',
+};
+---
+<a
+  href={href}
+  data-cta
+  data-cta-position={position}
+  data-cta-whatsapp={isWhatsapp ? 'true' : 'false'}
+  class={`${base} ${estilos[variant]} ${klass}`}
+>
+  {label}
+</a>

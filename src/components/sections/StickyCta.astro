@@ -1,0 +1,43 @@
+---
+import Cta from '../ui/Cta.astro';
+import { escola } from '../../content/escola';
+---
+<div
+  data-sticky-cta
+  class="fixed inset-x-0 bottom-0 z-40 translate-y-full border-t border-line bg-white px-4 py-3 transition-transform duration-200 lg:hidden"
+>
+  <Cta position="sticky" label={escola.ctaStickyLabel} variant="navy" class="w-full" />
+</div>
+
+<style>
+  [data-sticky-cta].is-on {
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  const barra = document.querySelector<HTMLElement>('[data-sticky-cta]');
+  const final = document.querySelector<HTMLElement>('[data-secao-final]');
+
+  if (barra) {
+    let finalVisivel = false;
+
+    if (final && 'IntersectionObserver' in window) {
+      new IntersectionObserver(
+        (entries) => {
+          finalVisivel = entries[0].isIntersecting;
+          atualizar();
+        },
+        { threshold: 0.05 }
+      ).observe(final);
+    }
+
+    function atualizar() {
+      const passouDoHero = window.scrollY > window.innerHeight * 0.85;
+      barra!.classList.toggle('is-on', passouDoHero && !finalVisivel);
+    }
+
+    atualizar();
+    window.addEventListener('scroll', atualizar, { passive: true });
+  }
+</script>

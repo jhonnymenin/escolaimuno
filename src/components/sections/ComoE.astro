@@ -1,0 +1,82 @@
+---
+import { escola } from '../../content/escola';
+import { site } from '../../config/site';
+const s = escola.comoE;
+const linha = s.linha.map((p) => ({
+  ...p,
+  horaVisivel: 'horaCondicional' in p && p.horaCondicional && !site.flags.showEndTime ? '' : p.hora,
+}));
+---
+<section id="como-e" class="bg-navy py-20 text-white sm:py-28 lg:py-36">
+  <div class="shell">
+    <div class="grid grid-cols-1 gap-x-16 gap-y-6 lg:grid-cols-12">
+      <h2 class="h2-fluid max-w-[14ch] lg:col-span-6">{s.titulo}</h2>
+      <p class="measure text-white/70 lg:col-span-6 lg:self-end">{s.apoio}</p>
+    </div>
+
+    <ol class="mt-14 lg:mt-20" data-linha-tempo>
+      {
+        linha.map((p) => (
+          <li class="linha-item border-t border-white/15 last:border-b">
+            <div class="grid grid-cols-1 gap-x-8 gap-y-2 py-6 sm:grid-cols-12 sm:py-7">
+              <div class="flex items-center gap-4 sm:col-span-3 lg:col-span-2">
+                <span class="marcador h-2.5 w-2.5 flex-none rounded-full bg-white/25" aria-hidden="true" />
+                <span class="font-display text-lg font-bold tabular-nums tracking-[-0.02em] text-agua">
+                  {p.horaVisivel}
+                </span>
+              </div>
+              <h3 class="font-display text-lg font-bold tracking-[-0.01em] sm:col-span-4 sm:text-xl lg:col-span-4">
+                {p.titulo}
+              </h3>
+              <p class="pl-[1.6rem] text-[0.95rem] text-white/65 sm:col-span-5 sm:pl-0 lg:col-span-6">
+                {p.descricao}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="mt-16 grid grid-cols-1 gap-x-12 gap-y-10 sm:grid-cols-3 lg:mt-20">
+      {
+        s.principios.map((p) => (
+          <div>
+            <h3 class="h3-fluid text-agua">{p.titulo}</h3>
+            <p class="mt-2.5 text-[0.95rem] leading-relaxed text-white/65">{p.descricao}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .marcador {
+    transition: background-color 0.35s ease;
+  }
+  .linha-item.is-on .marcador {
+    background-color: var(--color-agua);
+  }
+</style>
+
+<script>
+  const itens = document.querySelectorAll<HTMLElement>('[data-linha-tempo] .linha-item');
+  const reduzido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduzido || !('IntersectionObserver' in window)) {
+    itens.forEach((i) => i.classList.add('is-on'));
+  } else {
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-on');
+            obs.unobserve(e.target);
+          }
+        });
+      },
+      { rootMargin: '0px 0px -30% 0px' }
+    );
+    itens.forEach((i) => obs.observe(i));
+  }
+</script>

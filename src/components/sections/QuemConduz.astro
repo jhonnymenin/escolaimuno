@@ -1,0 +1,26 @@
+---
+import LogoRealizador from '../ui/LogoRealizador.astro';
+import { escola } from '../../content/escola';
+const s = escola.quemConduz;
+---
+<section id="quem-conduz" class="bg-white py-20 sm:py-28 lg:py-36">
+  <div class="shell">
+    <h2 class="h2-fluid max-w-[18ch]">{s.titulo}</h2>
+
+    <ul class="mt-14 border-t border-line lg:mt-20">
+      {
+        s.realizadores.map((r) => (
+          <li class="border-b border-line">
+            <div class="grid grid-cols-1 items-center gap-x-12 gap-y-5 py-9 lg:grid-cols-12 lg:py-11">
+              <div class="lg:col-span-4">
+                <LogoRealizador logo={r.logo} class="h-9 w-auto" />
+                <span class="sr-only">{r.nome}</span>
+              </div>
+              <p class="measure-wide text-ink2 lg:col-span-8">{r.descricao}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

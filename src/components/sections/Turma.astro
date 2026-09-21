@@ -1,0 +1,53 @@
+---
+import DotGrid from '../ui/DotGrid.astro';
+import { escola } from '../../content/escola';
+import { site } from '../../config/site';
+const s = escola.turma;
+const leva = s.leva.filter((i) => !('flag' in i) || site.flags[i.flag as keyof typeof site.flags]);
+---
+<section id="turma" class="bg-white pb-20 sm:pb-28 lg:pb-36">
+  <div class="shell">
+    <div class="pt-16 lg:pt-24">
+      <p class="eyebrow text-ciano-texto">{s.rotulo}</p>
+      <div class="mt-6 grid grid-cols-1 gap-x-16 gap-y-6 lg:grid-cols-12">
+        <h2 class="h2-fluid max-w-[14ch] lg:col-span-6">{s.titulo}</h2>
+        <p class="measure text-ink2 lg:col-span-6 lg:self-end">{s.apoio}</p>
+      </div>
+
+      <div class="mt-16 grid grid-cols-1 items-center gap-x-20 gap-y-14 lg:mt-20 lg:grid-cols-12">
+        <div class="lg:col-span-6">
+          <DotGrid />
+        </div>
+
+        <dl class="space-y-9 lg:col-span-6">
+          {
+            s.numeros.map((n) => (
+              <div class="flex items-baseline gap-6">
+                <dd class="font-display w-[3ch] shrink-0 text-right text-5xl font-bold tabular-nums tracking-[-0.04em] text-navy sm:text-6xl">
+                  {n.valor}
+                </dd>
+                <dt class="max-w-[14rem] text-[0.95rem] leading-snug text-ink2">{n.rotulo}</dt>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <p class="measure-wide mt-16 border-l-2 border-ciano pl-6 text-ink2">{s.nota}</p>
+
+      <div class="mt-16 border-t border-line pt-12 lg:mt-20">
+        <p class="eyebrow text-ink2">{s.levaTitulo}</p>
+        <div class="mt-9 grid grid-cols-1 gap-x-12 gap-y-9 sm:grid-cols-3">
+          {
+            leva.map((i) => (
+              <div>
+                <h3 class="h3-fluid">{i.titulo}</h3>
+                <p class="mt-2.5 text-[0.95rem] leading-relaxed text-ink2">{i.descricao}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

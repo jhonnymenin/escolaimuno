@@ -1,0 +1,37 @@
+---
+import Silhueta from '../ui/Silhueta.astro';
+import { escola } from '../../content/escola';
+const s = escola.porQueExiste;
+---
+<section id="por-que" class="bg-white py-20 sm:py-28 lg:py-36">
+  <div class="shell">
+    <div class="grid grid-cols-1 gap-y-14 lg:grid-cols-12 lg:gap-x-16">
+      <div class="lg:col-span-7">
+        <h2 class="h2-fluid max-w-[18ch]">{s.titulo}</h2>
+        <div class="measure mt-8 space-y-5 text-ink2">
+          {s.paragrafos.map((p) => <p>{p}</p>)}
+        </div>
+      </div>
+
+      <div class="flex items-start justify-center lg:col-span-5 lg:justify-end">
+        <Silhueta class="h-auto w-56 sm:w-64 lg:w-full lg:max-w-xs" />
+      </div>
+    </div>
+
+    <div class="mt-16 grid grid-cols-1 gap-x-12 gap-y-10 border-t border-line pt-12 sm:grid-cols-3 lg:mt-24">
+      {
+        s.principios.map((p) => (
+          <div>
+            <h3 class="h3-fluid">{p.titulo}</h3>
+            <p class="mt-2.5 text-[0.95rem] leading-relaxed text-ink2">{p.descricao}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-14 grid grid-cols-1 gap-x-16 gap-y-4 border-t border-line pt-10 lg:grid-cols-12">
+      <h3 class="h3-fluid lg:col-span-4">{s.publicoTitulo}</h3>
+      <p class="measure-wide text-ink2 lg:col-span-8">{s.publico}</p>
+    </div>
+  </div>
+</section>

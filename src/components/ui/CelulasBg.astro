@@ -1,0 +1,48 @@
+---
+/**
+ * Campo de células em duotone da paleta — usado como fundo do hero e da inscrição.
+ * Placeholder vetorial. Para usar a foto original, ver README ("Trocar por fotografia").
+ */
+interface Props {
+  class?: string;
+  intensidade?: number;
+}
+const { class: klass = '', intensidade = 1 } = Astro.props;
+
+let seed = 314159;
+const rand = () => {
+  seed = (seed * 1103515245 + 12345) % 2147483648;
+  return seed / 2147483648;
+};
+
+const cores = ['#0375C0', '#2FA8EE', '#03A7BE', '#5CCFC9', '#0A3D8F'];
+const celulas = Array.from({ length: 78 }, () => {
+  const r = 22 + rand() * 70;
+  return {
+    cx: rand() * 620,
+    cy: rand() * 640,
+    r,
+    cor: cores[Math.floor(rand() * cores.length)],
+    o: (0.12 + rand() * 0.38) * intensidade,
+  };
+});
+---
+<svg
+  class={klass}
+  viewBox="0 0 620 640"
+  preserveAspectRatio="xMidYMid slice"
+  aria-hidden="true"
+  focusable="false"
+>
+  <rect width="620" height="640" fill="#032766" />
+  <g>
+    {celulas.map((c) => <circle cx={c.cx} cy={c.cy} r={c.r} fill={c.cor} opacity={c.o.toFixed(3)} />)}
+  </g>
+  {
+    celulas
+      .slice(0, 26)
+      .map((c) => (
+        <circle cx={c.cx} cy={c.cy} r={c.r * 0.62} fill="#FFFFFF" opacity={(c.o * 0.18).toFixed(3)} />
+      ))
+  }
+</svg>

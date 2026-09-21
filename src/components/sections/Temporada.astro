@@ -1,0 +1,143 @@
+---
+import Icon from '../ui/Icon.astro';
+import { escola } from '../../content/escola';
+const s = escola.temporadaSecao;
+const h = escola.horario;
+---
+<section id="temporada" class="bg-mist py-20 sm:py-28 lg:py-36">
+  <div class="shell">
+    <p class="eyebrow text-ciano-texto">{s.rotulo}</p>
+    <div class="mt-6 grid grid-cols-1 gap-x-16 gap-y-6 lg:grid-cols-12">
+      <h2 class="h2-fluid max-w-[16ch] lg:col-span-7">{s.titulo}</h2>
+      <p class="measure text-ink2 lg:col-span-5 lg:self-end">{s.apoio}</p>
+    </div>
+
+    <ol class="mt-14 border-t border-line lg:mt-20">
+      {
+        escola.encontros.map((e) => (
+          <li class="border-b border-line">
+            <div class="grid grid-cols-1 items-start gap-x-8 gap-y-4 py-7 sm:grid-cols-12 sm:items-center sm:py-8">
+              <div class="flex items-baseline gap-4 sm:col-span-3 lg:col-span-2">
+                <span class="font-display text-xs font-semibold tabular-nums tracking-[0.12em] text-ink2">
+                  {e.numero}
+                </span>
+                <span class="font-display text-2xl font-bold tracking-[-0.03em] sm:text-[1.75rem]">
+                  {e.dataCurta}
+                </span>
+              </div>
+
+              <div class="flex items-start gap-4 sm:col-span-6 lg:col-span-7">
+                <Icon name={e.icone} size={30} class="mt-0.5 flex-none text-ciano-texto" />
+                <div>
+                  <h3 class="font-display text-lg font-bold leading-tight tracking-[-0.01em] sm:text-xl">
+                    {e.tema}
+                  </h3>
+                  <p class="mt-1.5 text-sm text-ink2">{e.especialidades.join(' · ')}</p>
+                </div>
+              </div>
+
+              <div class="sm:col-span-3 sm:text-right">
+                <button
+                  type="button"
+                  class="text-sm font-semibold text-azul-texto underline underline-offset-[5px] decoration-1 hover:decoration-2"
+                  data-ics
+                  data-date={e.data}
+                  data-title={`Encontro ${e.numero} — ${e.tema}`}
+                  data-desc={`${escola.nome} · Temporada ${escola.temporada}. ${e.especialidades.join(', ')}.`}
+                >
+                  {s.agendaCta}
+                </button>
+              </div>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-sm text-ink2">{s.rodape}</p>
+      <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ciano-texto">{s.selo}</p>
+    </div>
+  </div>
+</section>
+
+<script
+  define:vars={{
+    inicio: h.inicio,
+    fim: h.fim,
+    localNome: escola.local.nome,
+    localEndereco: `${escola.local.nome}, ${escola.local.endereco}`,
+  }}
+>
+  const pad = (n) => String(n).padStart(2, '0');
+  const utc = (iso, hora) => {
+    const d = new Date(`${iso}T${hora}:00-03:00`);
+    return (
+      d.getUTCFullYear() +
+      pad(d.getUTCMonth() + 1) +
+      pad(d.getUTCDate()) +
+      'T' +
+      pad(d.getUTCHours()) +
+      pad(d.getUTCMinutes()) +
+      '00Z'
+    );
+  };
+
+  const escapar = (t) => String(t).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n');
+
+  document.querySelectorAll('[data-ics]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const data = btn.dataset.date;
+      const titulo = btn.dataset.title;
+      const desc = btn.dataset.desc;
+
+      const linhas = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Escola Continuada de Doencas Imunomediadas//PT-BR',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        'BEGIN:VEVENT',
+        `UID:${data}-ecdi@escola`,
+        `DTSTAMP:${utc(data, inicio)}`,
+        `DTSTART:${utc(data, inicio)}`,
+        `DTEND:${utc(data, fim)}`,
+        `SUMMARY:${escapar(titulo)}`,
+        `DESCRIPTION:${escapar(desc)}`,
+        `LOCATION:${escapar(localEndereco)}`,
+        'END:VEVENT',
+        'END:VCALENDAR',
+      ];
+
+      // RFC 5545: dobrar linhas com mais de 75 octetos.
+      const dobrar = (l) => {
+        if (new TextEncoder().encode(l).length <= 75) return l;
+        const partes = [];
+        let atual = '';
+        for (const ch of l) {
+          const teste = atual + ch;
+          if (new TextEncoder().encode(teste).length > (partes.length ? 74 : 75)) {
+            partes.push(atual);
+            atual = ch;
+          } else {
+            atual = teste;
+          }
+        }
+        partes.push(atual);
+        return partes.join('\r\n ');
+      };
+
+      const blob = new Blob([linhas.map(dobrar).join('\r\n')], {
+        type: 'text/calendar;charset=utf-8',
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `escola-imunomediadas-${data}.ics`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+  });
+</script>
