@@ -90,6 +90,7 @@ O link **Adicionar à agenda** de cada encontro gera um `.ics` no próprio naveg
 ```
 media/
   fotos/                   Fotos originais, em alta. Fonte de verdade.
+  local/                   Fotos da APM Campinas (recepção, anfiteatro, terraço).
   logos/                   Logos originais (PNG com transparência).
 src/
   content/escola.ts        TODO o texto e os dados. Tipado. Nenhum componente tem copy.
@@ -97,6 +98,7 @@ src/
   components/sections/     Uma seção por arquivo, na ordem da página
   components/ui/           Peças pequenas: Cta, Foto, Icon, DotGrid, logos
   assets/fotos/            Derivadas de media/fotos por `npm run media`
+  assets/local/            Derivadas de media/local por `npm run media`
   assets/logos/            Derivadas de media/logos por `npm run media`
   assets/img/og.jpg        Imagem de Open Graph (1200×630)
   layouts/Base.astro       head, SEO, JSON-LD (EventSeries + 8 Event), tracking
@@ -143,13 +145,38 @@ Distribuição atual: `vacinacao` no hero, `seringa-frasco` em *Por que existe*,
 `terapias` em *Como é o encontro*, `centro-cirurgico` em *Quem conduz* e
 `pesquisadora` na seção de inscrição.
 
+**Fotos do local** (`media/local/`) seguem outro caminho: saem em cor natural, só
+com a saturação reduzida, porque é o único ponto da página em que interessa ver a
+casa como ela é. São as três que a turma usa na mesma noite — recepção, anfiteatro
+e terraço.
+
+> As fotos do local vieram do site da própria casa
+> ([smcc.org.br](https://smcc.org.br/institucional/sede-social/)). Como o evento
+> acontece lá, o uso é natural, mas vale um "ok" por escrito da secretaria antes de
+> divulgar — ou substituí-las por fotos suas, que é só trocar os arquivos em
+> `media/local/` e rodar `npm run media`.
+
 Para trocar uma foto, substitua o arquivo em `media/fotos/` **mantendo o nome** e rode
 `npm run media`. Para acrescentar outra, coloque em `media/fotos/`, rode o script e
 importe a variante certa na seção.
 
 **Logos** — de cada original saem duas versões: a colorida e uma branca (mesmo recorte,
 tudo pintado de branco) para uso sobre navy. Os arquivos já vêm aparados na
-transparência, então basta trocar o PNG em `media/logos/` e rodar `npm run media`.
+transparência e reduzidos a 1400px, então basta trocar o PNG em `media/logos/` e rodar
+`npm run media`.
+
+Duas marcas têm tratamento próprio, declarado no topo de
+[`scripts/prep-media.mjs`](scripts/prep-media.mjs):
+
+- **Alergológica saúde** — o arquivo oficial é a versão para fundo escuro: a palavra
+  "Alergológica" é um verde quase branco (`#E1F1F0`) que some no branco. Para a versão
+  de fundo claro, o script repinta só os pixels claros da área do texto com um verde
+  escuro (`#1B4F4B`); o símbolo e a palavra "saúde" ficam intactos. **Se existir o
+  arquivo oficial para fundo claro, ele é melhor: coloque em `media/logos/` e remova a
+  entrada de `RECOLORIR`.**
+- **Alergológica saúde**, na versão branca — o símbolo é feito de pétalas translúcidas
+  sobrepostas, e um branco chapado viraria uma mancha. Nessa marca o branco é modulado
+  pelo brilho de cada pixel, o que mantém o desenho legível sobre navy.
 
 As três logos de realizador aparecem sempre na **mesma altura visual**, não na mesma
 caixa: [`LogoRealizador.astro`](src/components/ui/LogoRealizador.astro) guarda um fator
@@ -197,6 +224,9 @@ Estado verificado nesta versão, com `npm run preview` servindo `dist/`:
   (performance, acessibilidade, boas práticas, SEO).
 - Sem erros de console; build e `astro check` limpos.
 - Conferido em 375px, 768px, 1024px e 1440px, sem rolagem horizontal em nenhum.
+- O mapa do Google é um iframe de terceiro e só é montado quando a seção *O lugar*
+  chega perto da tela, então não entra no carregamento inicial. Sem JavaScript, o
+  bloco fica com o nome da casa e o link para o Google Maps.
 - Contraste AA em todo o texto, foco visível, um único `h1`, HTML semântico e
   `prefers-reduced-motion` respeitado — com ele ligado, a cascata do grid de 100 pontos
   e o acendimento da linha do tempo aparecem prontos, sem animação.

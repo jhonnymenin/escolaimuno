@@ -24,10 +24,13 @@ const local = {
   name: escola.local.nome,
   address: {
     '@type': 'PostalAddress',
+    streetAddress: `${escola.local.logradouro} — ${escola.local.bairro}`,
+    postalCode: escola.local.cep,
     addressLocality: escola.local.cidade,
     addressRegion: escola.local.uf,
     addressCountry: escola.local.pais,
   },
+  telephone: escola.local.telefone,
 };
 
 // GTM e Pixel só carregam se as variáveis existirem, de forma adiada

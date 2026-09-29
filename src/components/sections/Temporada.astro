@@ -66,7 +66,7 @@ const h = escola.horario;
     inicio: h.inicio,
     fim: h.fim,
     localNome: escola.local.nome,
-    localEndereco: `${escola.local.nome}, ${escola.local.endereco}`,
+    localEndereco: `${escola.local.nomeCurto} — ${escola.local.endereco}`,
   }}
 >
   const pad = (n) => String(n).padStart(2, '0');

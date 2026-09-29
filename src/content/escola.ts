@@ -46,12 +46,17 @@ export const escola = {
   uf: 'SP',
 
   local: {
-    nome: 'SMCC — Sociedade de Medicina e Cirurgia de Campinas',
-    nomeCurto: 'SMCC',
-    endereco: 'Campinas, SP',
+    nome: 'APM Campinas — Associação Paulista de Medicina, Regional Campinas',
+    nomeCurto: 'APM Campinas',
+    logradouro: 'Rua Delfino Cintra, 63',
+    bairro: 'Centro',
+    cep: '13013-055',
+    endereco: 'Rua Delfino Cintra, 63 — Centro, Campinas/SP, CEP 13013-055',
     cidade: 'Campinas',
     uf: 'SP',
     pais: 'BR',
+    telefone: '(19) 3231-2811',
+    mapsQuery: 'Rua Delfino Cintra, 63 - Centro, Campinas - SP, 13013-055',
   },
 
   horario: {
@@ -64,7 +69,7 @@ export const escola = {
   seo: {
     title: 'Escola Continuada de Doenças Imunomediadas — Temporada 2027, Campinas',
     description:
-      'Oito encontros presenciais em Campinas, de março a novembro de 2027. Um caso clínico real por encontro, discutido entre doze especialidades. Cem vagas na turma inaugural.',
+      'Oito encontros presenciais na APM Campinas, de março a novembro de 2027. Um caso clínico real por encontro, discutido entre doze especialidades. Cem vagas na turma inaugural.',
     ogAlt: 'Escola Continuada de Doenças Imunomediadas — temporada 2027, Campinas',
   },
 
@@ -75,7 +80,8 @@ export const escola = {
   hero: {
     selo: 'Inscrições abertas',
     contexto: 'Campinas · março a novembro de 2027',
-    titulo: 'Oito eventos para mudar a forma como você discute o paciente imunomediado.',
+    titulo:
+      'Oito eventos para mudar a forma como você discute pacientes com doenças imunomediadas.',
     apoio:
       'Um caso clínico real por encontro. Debate aberto entre especialidades. A ciência que muda a conduta na segunda-feira.',
     numeros: [
@@ -84,7 +90,7 @@ export const escola = {
       { valor: '12+', rotulo: 'especialidades na mesma sala' },
     ],
     cta: 'Garantir minha vaga',
-    ctaNota: 'Sempre às quintas, 19h, na SMCC, em Campinas.',
+    ctaNota: 'Sempre às quintas, 19h, na APM Campinas.',
     realizacao: 'Uma realização',
   },
 
@@ -111,7 +117,7 @@ export const escola = {
     ],
     publicoTitulo: 'Para quem é',
     publico:
-      'Alergia e Imunologia, Pneumologia, Otorrinolaringologia, Dermatologia, Reumatologia, Gastroenterologia, Neurologia, Pediatria, Clínica Médica, Infectologia, Hematologia e Genética Médica. Também residentes, fellows e pós-graduandos dessas áreas.',
+      'Médicos alergistas e imunologistas, pneumologistas, otorrinolaringologistas, dermatologistas, reumatologistas, gastroenterologistas, neurologistas, pediatras, clínicos, infectologistas, hematologistas e geneticistas, além de residentes, fellows e pós-graduandos dessas áreas.',
   },
 
   temporadaSecao: {
@@ -120,7 +126,8 @@ export const escola = {
     apoio:
       'Cada evento é dedicado a um grupo de doenças, com caso clínico, discussão dirigida e atualização científica com especialista convidado.',
     agendaCta: 'Adicionar à agenda',
-    rodape: 'Sempre às quintas-feiras, 19h, na SMCC — Sociedade de Medicina e Cirurgia de Campinas.',
+    rodape:
+      'Sempre às quintas-feiras, 19h, na APM Campinas — Rua Delfino Cintra, 63, Centro.',
     selo: '100% presencial',
   },
 
@@ -246,6 +253,52 @@ export const escola = {
     ],
   },
 
+  lugar: {
+    rotulo: 'O lugar',
+    titulo: 'A Casa do Médico, no centro de Campinas.',
+    paragrafos: [
+      'Os oito encontros acontecem na APM Campinas — a regional da Associação Paulista de Medicina na cidade, a Sociedade de Medicina e Cirurgia de Campinas. A casa recebe cerca de 300 eventos científicos por ano e fica no Centro, a poucos minutos de quem vem pela Norte-Sul ou pela Anhanguera.',
+      'A turma usa três espaços na mesma noite: a recepção no credenciamento, o anfiteatro na discussão do caso e o terraço no coffee do fim.',
+    ],
+    espacos: [
+      {
+        foto: 'recepcao',
+        titulo: 'Recepção',
+        descricao: 'Onde a turma chega, se credencia e toma o café das 19h.',
+        alt: 'Recepção da APM Campinas, com balcão de atendimento e máquina de café',
+      },
+      {
+        foto: 'anfiteatro',
+        titulo: 'Anfiteatro',
+        descricao: 'O caso clínico, a discussão dirigida e a mesa multidisciplinar.',
+        alt: 'Anfiteatro da APM Campinas montado em formato auditório',
+      },
+      {
+        foto: 'terraco',
+        titulo: 'Terraço',
+        descricao: 'O coffee do fim, quando a conversa continua fora da sala.',
+        alt: 'Terraço da APM Campinas, com mesas redondas e vista para a cidade',
+      },
+    ],
+    comoChegarTitulo: 'Como chegar',
+    comoChegarCta: 'Abrir no Google Maps',
+    mapaCta: 'Abrir no Google Maps',
+    informacoes: [
+      {
+        titulo: 'Endereço',
+        texto: 'Rua Delfino Cintra, 63 — Centro, Campinas/SP. CEP 13013-055.',
+      },
+      {
+        titulo: 'Estacionamento',
+        texto: 'Marechal Park, na Rua Delfino Cintra, 33, ao lado da casa, é conveniado.',
+      },
+      {
+        titulo: 'Secretaria',
+        texto: '(19) 3231-2811, de segunda a sexta, das 8h às 18h.',
+      },
+    ],
+  },
+
   quemConduz: {
     rotulo: 'Quem conduz',
     titulo: 'Três casas que já dividem pacientes, laboratório e sala de aula.',
@@ -321,7 +374,7 @@ export const escola = {
       {
         numero: '03',
         titulo: 'Nos vemos em 18 de março',
-        descricao: 'Primeiro encontro da temporada, 19h, na SMCC.',
+        descricao: 'Primeiro encontro da temporada, 19h, na APM Campinas.',
       },
     ],
     cta: 'Quero me inscrever',
