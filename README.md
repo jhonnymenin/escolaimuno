@@ -35,7 +35,7 @@ do projeto na Vercel. O arquivo de referência é [`.env.example`](.env.example)
 
 | Variável | Uso | Obrigatória |
 |---|---|---|
-| `PUBLIC_CTA_URL` | Link de inscrição (produto na plataforma EAD da ON). **Se vazio, o CTA cai para o WhatsApp.** | não |
+| `PUBLIC_CTA_URL` | Link de inscrição (produto na plataforma EAD da ON). **Se vazio, o CTA cai para o WhatsApp.** Ver *Ligar o checkout*, abaixo | não |
 | `PUBLIC_WHATSAPP` | Número com DDI, só dígitos. Usado quando `PUBLIC_CTA_URL` está vazio. Tem padrão embutido (`5511970687422`) para o CTA não ficar morto num deploy sem variáveis | não |
 | `PUBLIC_SPONSOR_CONTACT` | E-mail ou link para empresas interessadas em patrocínio. Se vazio, o bloco some do rodapé | não |
 | `PUBLIC_GTM_ID` | Google Tag Manager (`GTM-XXXXXXX`). Se vazio, nada é carregado | não |
@@ -65,6 +65,31 @@ Flags de conteúdo ficam em [`src/config/site.ts`](src/config/site.ts):
    `PUBLIC_SITE_URL` bate com ele e faça um redeploy — canonical, Open Graph e
    sitemap dependem desse valor.
 6. Atualize a linha `Sitemap:` de [`public/robots.txt`](public/robots.txt) com o domínio final.
+
+---
+
+## Ligar o checkout
+
+O checkout da temporada é este produto na EAD da ON:
+
+```
+https://ead.on-educacao.com.br/cart/buy/one/click/23
+```
+
+Ele ainda não está no ar, então `PUBLIC_CTA_URL` está vazia e **todos os CTAs caem para
+o WhatsApp**. Quando o link começar a funcionar, ligá-lo é uma mudança de variável, sem
+deploy de código:
+
+1. Na Vercel, em **Settings → Environment Variables**, cadastre `PUBLIC_CTA_URL` com a
+   URL acima (Production, Preview e Development).
+2. **Deployments → Redeploy** no último deploy.
+
+A partir daí os quatro CTAs (header, hero, barra fixa do mobile e seção de inscrição)
+passam a apontar para o checkout, e os `utm_*`, `fbclid` e `gclid` capturados na chegada
+são repassados como parâmetros dessa URL em vez de irem no fim da mensagem do WhatsApp.
+O evento `cta_click` continua igual, com a posição do botão.
+
+Para voltar ao WhatsApp a qualquer momento, basta apagar a variável e redeployar.
 
 ---
 
