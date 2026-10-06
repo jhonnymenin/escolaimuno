@@ -1,13 +1,8 @@
 ---
 import Foto from '../ui/Foto.astro';
 import { escola } from '../../content/escola';
-import { site } from '../../config/site';
 import foto from '../../assets/fotos/terapias-duotone.jpg';
 const s = escola.comoE;
-const linha = s.linha.map((p) => ({
-  ...p,
-  horaVisivel: 'horaCondicional' in p && p.horaCondicional && !site.flags.showEndTime ? '' : p.hora,
-}));
 ---
 <section id="como-e" class="bg-navy py-16 text-white sm:py-24 lg:py-32">
   <div class="shell">
@@ -18,23 +13,51 @@ const linha = s.linha.map((p) => ({
 
     <ol class="mt-12 lg:mt-20" data-linha-tempo>
       {
-        linha.map((p) => (
-          <li class="linha-item relative border-t border-white/15 last:border-b">
-            <span
-              class="marcador absolute left-0 top-[1.65rem] h-2.5 w-2.5 rounded-full bg-white/25 md:top-[2.3rem]"
-              aria-hidden="true"
-            />
-            <div class="grid grid-cols-1 gap-x-8 gap-y-1.5 py-5 pl-6 md:grid-cols-12 md:gap-y-2 md:py-7">
-              <span class="font-display text-lg font-bold tabular-nums tracking-[-0.02em] text-agua empty:hidden md:col-span-3 lg:col-span-2">
-                {p.horaVisivel}
-              </span>
-              <h3 class="font-display text-lg font-bold tracking-[-0.01em] md:col-span-4 md:text-xl">
-                {p.titulo}
-              </h3>
-              <p class="text-[0.95rem] text-white/65 md:col-span-5 lg:col-span-6">{p.descricao}</p>
-            </div>
-          </li>
-        ))
+        s.linha.map((p) => {
+          const satelite = 'satelite' in p && p.satelite;
+          return (
+            <li class="linha-item relative border-t border-white/15 last:border-b">
+              <span
+                class:list={[
+                  'marcador absolute left-0 h-2.5 w-2.5 rounded-full bg-white/25 top-[1.65rem] md:top-[2.3rem]',
+                  satelite && 'is-satelite',
+                ]}
+                aria-hidden="true"
+              />
+              <div class="grid grid-cols-1 gap-x-8 gap-y-1.5 py-5 pl-6 md:grid-cols-12 md:gap-y-2 md:py-7">
+                <span
+                  class:list={[
+                    'font-display text-lg tabular-nums tracking-[-0.02em] empty:hidden md:col-span-3 lg:col-span-2',
+                    satelite ? 'font-medium text-white/60' : 'font-bold text-agua',
+                  ]}
+                >
+                  {p.hora}
+                </span>
+                <h3
+                  class:list={[
+                    'font-display flex flex-wrap items-center gap-x-3 gap-y-1.5 text-lg tracking-[-0.01em] md:col-span-4 md:text-xl',
+                    satelite ? 'font-medium text-white/80' : 'font-bold',
+                  ]}
+                >
+                  {p.titulo}
+                  {'selo' in p && p.selo && (
+                    <span class="rounded-[3px] border border-white/25 px-2 py-0.5 font-sans text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-white/60">
+                      {p.selo}
+                    </span>
+                  )}
+                </h3>
+                <p
+                  class:list={[
+                    'text-[0.95rem] md:col-span-5 lg:col-span-6',
+                    satelite ? 'text-white/50' : 'text-white/65',
+                  ]}
+                >
+                  {p.descricao}
+                </p>
+              </div>
+            </li>
+          );
+        })
       }
     </ol>
 
@@ -72,6 +95,12 @@ const linha = s.linha.map((p) => ({
   }
   .linha-item.is-on .marcador {
     background-color: var(--color-agua);
+  }
+
+  /* Os simpósios satélite ficam um degrau abaixo na hierarquia. */
+  .linha-item.is-on .marcador.is-satelite {
+    background-color: transparent;
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--color-agua) 60%, transparent);
   }
 </style>
 

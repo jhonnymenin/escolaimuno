@@ -1,15 +1,20 @@
 ---
 /**
- * Grid de 100 pontos — uma vaga por ponto.
- * Distribuição fixa (seed determinístico) e cascata diagonal de ~1,2s ao entrar na tela.
- * É o único momento animado da página.
+ * Grid de 100 pontos — um lugar por ponto, em cada encontro.
+ * Os 70 primeiros são da temporada completa e usam a paleta; os 30 últimos são
+ * os lugares abertos por encontro e ficam em cinza claro.
+ *
+ * Distribuição fixa (seed determinístico) e cascata diagonal de ~1,2s ao entrar
+ * na tela. É o único momento animado da página.
  */
 interface Props {
   class?: string;
 }
 const { class: klass = '' } = Astro.props;
 
+const TEMPORADA = 70;
 const cores = ['#032766', '#0375C0', '#03A7BE', '#2FA8EE', '#5CCFC9'];
+const corAvulso = '#C9DCEA';
 
 // LCG determinístico: mesma distribuição em todo build.
 let seed = 20270318;
@@ -22,7 +27,7 @@ const pontos = Array.from({ length: 100 }, (_, i) => {
   const linha = Math.floor(i / 10);
   const coluna = i % 10;
   return {
-    cor: cores[Math.floor(rand() * cores.length)],
+    cor: i < TEMPORADA ? cores[Math.floor(rand() * cores.length)] : corAvulso,
     // cascata diagonal: 1,2s do primeiro ao último ponto
     delay: `${(((linha + coluna) / 18) * 1.05).toFixed(3)}s`,
   };

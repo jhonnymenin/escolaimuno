@@ -10,6 +10,9 @@
   --color-ink2: #5b6b82;
   --color-line: #dce4ee;
 
+  /* Lugares abertos por encontro, no grid de 100 pontos. */
+  --color-avulso: #c9dcea;
+
   /* Variantes legíveis (AA) para texto pequeno sobre fundo claro. */
   --color-ciano-texto: #026b7a;
   --color-azul-texto: #0369ab;

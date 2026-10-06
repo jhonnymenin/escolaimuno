@@ -1,0 +1,109 @@
+---
+import Cta from '../ui/Cta.astro';
+import Icon from '../ui/Icon.astro';
+import { escola } from '../../content/escola';
+
+const s = escola.comoParticipar;
+---
+<section id="como-participar" class="bg-white py-16 sm:py-24 lg:py-32">
+  <div class="shell">
+    <p class="eyebrow text-ciano-texto">{s.rotulo}</p>
+    <div class="mt-5 grid grid-cols-1 gap-x-10 gap-y-5 lg:grid-cols-12 lg:gap-x-16">
+      <h2 class="h2-fluid max-w-[16ch] lg:col-span-6">{s.titulo}</h2>
+      <p class="measure text-ink2 lg:col-span-6 lg:self-end">{s.apoio}</p>
+    </div>
+
+    <ul class="mt-12 grid grid-cols-1 gap-6 lg:mt-16 lg:grid-cols-2 lg:gap-8">
+      {
+        s.modalidades.map((m) => (
+          <li
+            class:list={[
+              'flex flex-col p-7 sm:p-9',
+              m.destaque ? 'bg-navy text-white' : 'border border-line bg-white',
+            ]}
+          >
+            <div class="flex items-center justify-between gap-4">
+              <p
+                class:list={[
+                  'text-[0.68rem] font-semibold uppercase tracking-[0.18em]',
+                  m.destaque ? 'text-white/55' : 'text-ink2',
+                ]}
+              >
+                {m.rotulo}
+              </p>
+              {m.selo && (
+                <p class="rounded-[3px] bg-agua px-2.5 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-navy">
+                  {m.selo}
+                </p>
+              )}
+            </div>
+
+            <h3
+              class:list={[
+                'font-display mt-5 text-2xl font-bold tracking-[-0.02em] sm:text-3xl',
+                m.destaque ? 'text-white' : 'text-navy',
+              ]}
+            >
+              {m.titulo}
+            </h3>
+            <p class:list={['mt-1.5 text-[0.95rem]', m.destaque ? 'text-white/65' : 'text-ink2']}>
+              {m.subtitulo}
+            </p>
+
+            <p
+              class:list={[
+                'font-display mt-7 text-4xl font-bold tracking-[-0.03em] sm:text-5xl',
+                m.destaque ? 'text-agua' : 'text-navy',
+              ]}
+            >
+              {m.preco}
+            </p>
+
+            <ul
+              class:list={[
+                'mt-7 space-y-3 border-t pt-7',
+                m.destaque ? 'border-white/20' : 'border-line',
+              ]}
+            >
+              {m.itens.map((item) => (
+                <li class="flex items-start gap-3">
+                  <Icon
+                    name="check"
+                    size={18}
+                    class:list={['mt-0.5 flex-none', m.destaque ? 'text-agua' : 'text-ciano-texto']}
+                  />
+                  <span
+                    class:list={[
+                      'text-[0.95rem] leading-relaxed',
+                      m.destaque ? 'text-white/80' : 'text-ink2',
+                    ]}
+                  >
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <div class="mt-9 pt-1 lg:mt-auto lg:pt-9">
+              <Cta
+                position={m.destaque ? 'modalidade-temporada' : 'modalidade-avulso'}
+                label={m.cta}
+                variant={m.destaque ? 'agua' : 'contorno'}
+                whatsapp={m.whatsapp}
+                href={m.href}
+                class="w-full"
+              />
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div
+      class="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 border-t border-line pt-8 lg:grid-cols-12 lg:gap-x-16"
+    >
+      <h3 class="h3-fluid lg:col-span-5">{s.migracao.titulo}</h3>
+      <p class="measure-wide text-ink2 lg:col-span-7">{s.migracao.texto}</p>
+    </div>
+  </div>
+</section>

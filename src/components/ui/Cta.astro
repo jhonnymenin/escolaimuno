@@ -1,24 +1,43 @@
 ---
 import { escola } from '../../content/escola';
-import { ctaHref, site } from '../../config/site';
+import { ctaHref, whatsappHref, site } from '../../config/site';
 
 interface Props {
   /** Posição, enviada no evento cta_click. */
-  position: 'hero' | 'sticky' | 'final' | 'header';
+  position: string;
   label: string;
-  variant?: 'agua' | 'navy' | 'texto';
+  variant?: 'agua' | 'navy' | 'branco' | 'contorno' | 'texto';
+  /**
+   * Mensagem do WhatsApp. Quando informada, o CTA vai sempre para o WhatsApp
+   * com esse texto, mesmo que PUBLIC_CTA_URL exista — é o caso dos botões de
+   * modalidade e dos encontros avulsos, que precisam de uma conversa.
+   */
+  whatsapp?: string;
+  /** Destino alternativo, como uma âncora para outra seção. */
+  href?: string;
   class?: string;
 }
-const { position, label, variant = 'agua', class: klass = '' } = Astro.props;
+const {
+  position,
+  label,
+  variant = 'agua',
+  whatsapp,
+  href: hrefProp,
+  class: klass = '',
+} = Astro.props;
 
-const href = ctaHref(escola.whatsappMensagem);
-const isWhatsapp = !site.ctaUrl;
+const ehAncora = Boolean(hrefProp);
+const ehWhatsapp = !ehAncora && (Boolean(whatsapp) || !site.ctaUrl);
+
+const href = hrefProp ?? (whatsapp ? whatsappHref(whatsapp) : ctaHref(escola.whatsappMensagem));
 
 const base =
   'inline-flex items-center justify-center rounded-[4px] font-semibold transition-colors duration-150';
 const estilos = {
   agua: 'bg-agua text-navy px-7 py-4 text-base hover:bg-white',
   navy: 'bg-navy text-white px-7 py-4 text-base hover:bg-azul',
+  branco: 'bg-white text-navy px-7 py-4 text-base hover:bg-agua',
+  contorno: 'border border-navy text-navy px-7 py-4 text-base hover:bg-navy hover:text-white',
   texto:
     'text-sm font-semibold underline underline-offset-[6px] decoration-1 decoration-agua hover:decoration-2 px-0 py-1',
 };
@@ -27,7 +46,7 @@ const estilos = {
   href={href}
   data-cta
   data-cta-position={position}
-  data-cta-whatsapp={isWhatsapp ? 'true' : 'false'}
+  data-cta-whatsapp={ehWhatsapp ? 'true' : 'false'}
   class={`${base} ${estilos[variant]} ${klass}`}
 >
   {label}

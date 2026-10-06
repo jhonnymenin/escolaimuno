@@ -37,6 +37,24 @@ export interface PassoTempo {
   hora?: string;
   titulo: string;
   descricao: string;
+  /** Satélite: tratamento visual secundário na linha do tempo. */
+  satelite?: boolean;
+  /** Selo curto ao lado do título, como "20 MIN". */
+  selo?: string;
+}
+
+export interface Modalidade {
+  rotulo: string;
+  titulo: string;
+  subtitulo: string;
+  preco: string;
+  itens: string[];
+  cta: string;
+  /** Mensagem do WhatsApp; sem ela, o CTA é uma âncora para `href`. */
+  whatsapp?: string;
+  href?: string;
+  destaque: boolean;
+  selo?: string;
 }
 
 export const escola = {
@@ -61,7 +79,8 @@ export const escola = {
 
   horario: {
     inicio: '19:00',
-    fim: '21:30',
+    // Fecha o bloco de networking, que começa às 21h35. Usado no .ics e no JSON-LD.
+    fim: '22:00',
     diaDaSemana: 'quintas-feiras',
     fuso: 'America/Sao_Paulo',
   },
@@ -69,7 +88,7 @@ export const escola = {
   seo: {
     title: 'Escola Continuada de Doenças Imunomediadas — Temporada 2027, Campinas',
     description:
-      'Oito encontros presenciais na APM Campinas, de março a novembro de 2027. Um caso clínico real por encontro, discutido entre doze especialidades. Cem vagas na turma inaugural.',
+      'Oito encontros presenciais na APM Campinas, de março a novembro de 2027. Um caso clínico real por encontro, discutido entre doze especialidades. Cem lugares por encontro.',
     ogAlt: 'Escola Continuada de Doenças Imunomediadas — temporada 2027, Campinas',
   },
 
@@ -86,7 +105,7 @@ export const escola = {
       'Um caso clínico real por encontro. Debate aberto entre especialidades. A ciência que muda a conduta na segunda-feira.',
     numeros: [
       { valor: '8', rotulo: 'encontros presenciais' },
-      { valor: '100', rotulo: 'vagas na turma' },
+      { valor: '100', rotulo: 'lugares por encontro' },
       { valor: '12+', rotulo: 'especialidades na mesma sala' },
     ],
     cta: 'Garantir minha vaga',
@@ -112,7 +131,7 @@ export const escola = {
       },
       {
         titulo: 'Turma pequena',
-        descricao: 'Cem vagas para preservar a qualidade da discussão.',
+        descricao: 'Cem lugares por encontro para preservar a qualidade da discussão.',
       },
     ],
     publicoTitulo: 'Para quem é',
@@ -126,6 +145,7 @@ export const escola = {
     apoio:
       'Cada evento é dedicado a um grupo de doenças, com caso clínico, discussão dirigida e atualização científica com especialista convidado.',
     agendaCta: 'Adicionar à agenda',
+    avulsoCta: 'Quero só este encontro',
     rodape:
       'Sempre às quintas-feiras, 19h, na APM Campinas — Rua Delfino Cintra, 63, Centro.',
     selo: '100% presencial',
@@ -198,6 +218,53 @@ export const escola = {
     },
   ] satisfies Encontro[],
 
+  comoParticipar: {
+    rotulo: 'Como participar',
+    titulo: 'A temporada inteira ou só o tema da sua área.',
+    apoio:
+      'São cem lugares por encontro. Setenta ficam com quem assina a temporada completa. Os outros trinta são abertos por encontro, para quem quer apenas o tema da sua especialidade.',
+    modalidades: [
+      {
+        rotulo: 'Opção 1',
+        selo: 'Recomendado',
+        titulo: 'Temporada completa',
+        subtitulo: '70 vagas',
+        preco: 'R$ 999',
+        itens: [
+          'Os 8 encontros da temporada',
+          'Lugar garantido o ano inteiro',
+          'Certificado da temporada completa',
+          'Conteúdos digitais na plataforma EAD',
+          'Melhor valor por encontro',
+        ],
+        cta: 'Quero a temporada completa',
+        whatsapp:
+          'Olá, quero me inscrever na temporada completa da Escola Continuada de Doenças Imunomediadas 2027.',
+        destaque: true,
+      },
+      {
+        rotulo: 'Opção 2',
+        titulo: 'Encontro avulso',
+        subtitulo: '30 vagas por encontro',
+        preco: 'R$ 250',
+        itens: [
+          'Um encontro, à sua escolha',
+          'Certificado daquele encontro',
+          'Vagas liberadas 45 dias antes',
+          'Sujeito à disponibilidade',
+        ],
+        cta: 'Quero um encontro',
+        href: '#temporada',
+        destaque: false,
+      },
+    ] satisfies Modalidade[],
+    migracao: {
+      titulo: 'Mudou de ideia depois do primeiro encontro?',
+      texto:
+        'Quem entra por um encontro avulso pode migrar para a temporada completa em até 30 dias, abatendo o valor já pago. O certificado da temporada é emitido apenas para quem participa dos oito encontros.',
+    },
+  },
+
   comoE: {
     rotulo: 'Como é o encontro',
     titulo: 'Duas horas e meia desenhadas para discussão.',
@@ -210,12 +277,19 @@ export const escola = {
         descricao: 'Chegada da turma e conversa antes de começar.',
       },
       {
-        hora: '19h30',
+        hora: '19h20',
+        titulo: 'Simpósio satélite',
+        descricao: 'Apresentação da indústria parceira.',
+        satelite: true,
+        selo: '20 min',
+      },
+      {
+        hora: '19h40',
         titulo: 'O caso clínico',
         descricao: 'Um paciente real é apresentado à turma.',
       },
       {
-        hora: '20h00',
+        hora: '20h05',
         titulo: 'A discussão',
         descricao: 'Diagnóstico diferencial e condutas em debate aberto.',
       },
@@ -225,18 +299,23 @@ export const escola = {
         descricao: 'Atualização com o especialista convidado do tema.',
       },
       {
-        hora: '21h00',
+        hora: '20h55',
+        titulo: 'Simpósio satélite',
+        descricao: 'Apresentação da indústria parceira.',
+        satelite: true,
+        selo: '20 min',
+      },
+      {
+        hora: '21h15',
         titulo: 'Mesa multidisciplinar',
         descricao: 'Cada especialidade devolve o seu olhar sobre o caso.',
       },
       {
-        // exibido apenas quando showEndTime está ligado
-        hora: '21h30',
-        titulo: 'Networking',
-        descricao: 'A conversa continua no coffee.',
-        horaCondicional: true,
+        hora: '21h35',
+        titulo: 'Coffee e networking',
+        descricao: 'A conversa continua fora da sala.',
       },
-    ],
+    ] satisfies PassoTempo[],
     principios: [
       {
         titulo: 'Discussão dirigida',
@@ -247,8 +326,9 @@ export const escola = {
         descricao: 'Um nome diferente a cada tema, trazendo a evidência atual.',
       },
       {
-        titulo: 'Sem palestra comercial',
-        descricao: 'Conteúdo definido pelo corpo científico, sem indicação de produto.',
+        titulo: 'Conteúdo independente',
+        descricao:
+          'Temas, casos e conclusões definidos pelo corpo científico. Os simpósios satélite são identificados e não interferem na discussão.',
       },
     ],
   },
@@ -258,7 +338,7 @@ export const escola = {
     titulo: 'A Casa do Médico, no centro de Campinas.',
     paragrafos: [
       'Os oito encontros acontecem na APM Campinas — a regional da Associação Paulista de Medicina na cidade, a Sociedade de Medicina e Cirurgia de Campinas. A casa recebe cerca de 300 eventos científicos por ano e fica no Centro, a poucos minutos de quem vem pela Norte-Sul ou pela Anhanguera.',
-      'A turma usa três espaços na mesma noite: a recepção no credenciamento, o anfiteatro na discussão do caso e o terraço no coffee do fim.',
+      'A turma usa três espaços no mesmo encontro: a recepção no credenciamento, o anfiteatro na discussão do caso e o terraço no coffee do fim.',
     ],
     espacos: [
       {
@@ -326,13 +406,18 @@ export const escola = {
 
   turma: {
     rotulo: 'A turma',
-    titulo: 'São cem vagas. E a turma é a mesma o ano inteiro.',
+    titulo: 'Setenta médicos atravessam o ano inteiro juntos.',
     apoio:
-      'Quem entra assume os oito encontros. É isso que transforma uma plateia em comunidade — e o que permite discutir de verdade, sem auditório lotado.',
+      'São cem lugares por encontro. Setenta ficam com quem assina a temporada completa — o grupo que atravessa o ano. Os outros trinta são abertos por encontro, para quem quer apenas o tema da sua especialidade.',
     numeros: [
-      { valor: '100', rotulo: 'vagas na temporada inaugural' },
+      { valor: '70', rotulo: 'vagas de temporada completa' },
       { valor: '8', rotulo: 'encontros com a mesma turma' },
       { valor: '1', rotulo: 'único grupo por ano' },
+    ],
+    /** Legenda do grid de 100 pontos. */
+    legenda: [
+      { tipo: 'temporada' as const, texto: '70 da temporada' },
+      { tipo: 'avulso' as const, texto: '30 por encontro' },
     ],
     levaTitulo: 'O que você leva da temporada',
     leva: [
@@ -347,11 +432,11 @@ export const escola = {
       },
       {
         titulo: 'Uma rede de verdade',
-        descricao: 'Cem colegas de doze especialidades, oito vezes no ano.',
+        descricao: 'Setenta colegas de doze especialidades, oito vezes no ano.',
       },
     ],
     nota:
-      'A temporada inaugural começa em 18 de março de 2027. As vagas são confirmadas por ordem de inscrição e não há turma paralela.',
+      'A temporada inaugural começa em 18 de março de 2027. As vagas são confirmadas por ordem de inscrição.',
   },
 
   inscricao: {
@@ -369,7 +454,7 @@ export const escola = {
       {
         numero: '02',
         titulo: 'Confirme a inscrição',
-        descricao: 'A vaga é reservada em seu nome para os oito encontros.',
+        descricao: 'A vaga é reservada em seu nome na modalidade que você escolher.',
       },
       {
         numero: '03',
@@ -392,5 +477,14 @@ export const escola = {
   whatsappMensagem:
     'Olá, quero me inscrever na Escola Continuada de Doenças Imunomediadas 2027.',
 } as const;
+
+/**
+ * Mensagem do WhatsApp para a inscrição avulsa de um encontro. É distinta em
+ * cada data de propósito: é o que permite ver qual tema puxa mais lead.
+ */
+export const mensagemEncontroAvulso = (encontro: Encontro): string => {
+  const [, mes, dia] = encontro.data.split('-');
+  return `Olá, quero me inscrever no encontro de ${dia}/${mes} — ${encontro.tema} — da ${escola.nome} ${escola.temporada}.`;
+};
 
 export type Escola = typeof escola;

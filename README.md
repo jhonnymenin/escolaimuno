@@ -47,7 +47,6 @@ Flags de conteúdo ficam em [`src/config/site.ts`](src/config/site.ts):
 | Flag | Padrão | Efeito |
 |---|---|---|
 | `showCertificate` | `true` | Mostra o item "Certificação" em *O que você leva da temporada* |
-| `showEndTime` | `false` | Mostra o horário `21h30` no item "Networking" da linha do tempo. Desligado porque o término ainda não está confirmado |
 
 ---
 
@@ -90,6 +89,31 @@ são repassados como parâmetros dessa URL em vez de irem no fim da mensagem do 
 O evento `cta_click` continua igual, com a posição do botão.
 
 Para voltar ao WhatsApp a qualquer momento, basta apagar a variável e redeployar.
+
+---
+
+## Modalidades e CTAs
+
+A página vende de duas formas, e os botões refletem isso:
+
+| Botão | Destino |
+|---|---|
+| Header, hero, barra fixa do mobile e seção de inscrição | `PUBLIC_CTA_URL`; sem ela, WhatsApp com `escola.whatsappMensagem` |
+| "Quero a temporada completa" (*Como participar*) | **sempre** WhatsApp, com a mensagem da modalidade |
+| "Quero um encontro" (*Como participar*) | âncora `#temporada`, para a pessoa escolher a data |
+| "Quero só este encontro" (um por encontro, em *A temporada*) | **sempre** WhatsApp, com uma mensagem distinta por data e tema |
+
+Os dois casos "sempre WhatsApp" existem porque são conversas, não compra direta: o
+componente [`Cta.astro`](src/components/ui/Cta.astro) aceita a prop `whatsapp` e, quando
+ela vem preenchida, ignora `PUBLIC_CTA_URL`. **Se um dia o checkout tiver um link por
+modalidade, troque a prop `whatsapp` por `href` nessas chamadas.**
+
+As oito mensagens dos encontros são geradas por `mensagemEncontroAvulso()`, em
+`content/escola.ts`, e são distintas de propósito — é o que permite ver qual tema puxa
+mais lead. Cada uma dispara `cta_click` com `cta_position` = `encontro-01` … `encontro-08`;
+os cards de modalidade usam `modalidade-temporada` e `modalidade-avulso`.
+
+**Os preços aparecem só na seção *Como participar*.** Não repita no hero nem no CTA final.
 
 ---
 
@@ -249,6 +273,7 @@ Estado verificado nesta versão, com `npm run preview` servindo `dist/`:
   (performance, acessibilidade, boas práticas, SEO).
 - Sem erros de console; build e `astro check` limpos.
 - Conferido em 375px, 768px, 1024px e 1440px, sem rolagem horizontal em nenhum.
+- As oito mensagens de WhatsApp por encontro são distintas e com encode correto.
 - O mapa do Google é um iframe de terceiro e só é montado quando a seção *O lugar*
   chega perto da tela, então não entra no carregamento inicial. Sem JavaScript, o
   bloco fica com o nome da casa e o link para o Google Maps.

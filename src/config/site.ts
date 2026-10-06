@@ -24,8 +24,6 @@ export const site = {
 
   flags: {
     showCertificate: true,
-    /** Término às 21h30 ainda não confirmado. */
-    showEndTime: false,
   },
 } as const;
 
@@ -37,11 +35,12 @@ export const sponsorHref = (): string => {
   return `mailto:${c}`;
 };
 
+/** Link do WhatsApp com uma mensagem já escrita. */
+export const whatsappHref = (mensagem: string): string =>
+  site.whatsapp
+    ? `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(mensagem)}`
+    : '#inscricao';
+
 /** URL base do CTA. Sem PUBLIC_CTA_URL, cai para o WhatsApp. */
-export const ctaHref = (mensagem: string): string => {
-  if (site.ctaUrl) return site.ctaUrl;
-  if (site.whatsapp) {
-    return `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(mensagem)}`;
-  }
-  return '#inscricao';
-};
+export const ctaHref = (mensagem: string): string =>
+  site.ctaUrl || whatsappHref(mensagem);

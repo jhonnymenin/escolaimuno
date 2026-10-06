@@ -1,6 +1,7 @@
 ---
 import Icon from '../ui/Icon.astro';
-import { escola } from '../../content/escola';
+import { escola, mensagemEncontroAvulso } from '../../content/escola';
+import { whatsappHref } from '../../config/site';
 const s = escola.temporadaSecao;
 const h = escola.horario;
 ---
@@ -36,16 +37,27 @@ const h = escola.horario;
                 </div>
               </div>
 
-              <div class="md:col-span-3 md:text-right">
+              <div class="flex flex-wrap items-center gap-x-6 gap-y-2 md:col-span-3 md:flex-col md:items-end md:gap-y-2.5">
+                <a
+                  href={whatsappHref(mensagemEncontroAvulso(e))}
+                  data-cta
+                  data-cta-position={`encontro-${e.numero}`}
+                  data-cta-whatsapp="true"
+                  class="text-sm font-semibold text-azul-texto underline underline-offset-[5px] decoration-1 hover:decoration-2"
+                >
+                  {s.avulsoCta}
+                  <span class="sr-only"> — {e.dataCurta}, {e.tema}</span>
+                </a>
                 <button
                   type="button"
-                  class="text-sm font-semibold text-azul-texto underline underline-offset-[5px] decoration-1 hover:decoration-2"
+                  class="text-sm text-ink2 underline underline-offset-[5px] decoration-1 hover:decoration-2"
                   data-ics
                   data-date={e.data}
                   data-title={`Encontro ${e.numero} — ${e.tema}`}
                   data-desc={`${escola.nome} · Temporada ${escola.temporada}. ${e.especialidades.join(', ')}.`}
                 >
                   {s.agendaCta}
+                  <span class="sr-only"> — {e.dataCurta}, {e.tema}</span>
                 </button>
               </div>
             </div>
