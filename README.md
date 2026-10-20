@@ -35,7 +35,7 @@ do projeto na Vercel. O arquivo de referência é [`.env.example`](.env.example)
 
 | Variável | Uso | Obrigatória |
 |---|---|---|
-| `PUBLIC_CTA_URL` | Link de inscrição (produto na plataforma EAD da ON). **Se vazio, o CTA cai para o WhatsApp.** Ver *Ligar o checkout*, abaixo | não |
+| `PUBLIC_CTA_URL` | Sobrescreve o link do produto da temporada definido em `src/config/checkout.ts`. Ver *Ligar o checkout*, abaixo | não |
 | `PUBLIC_WHATSAPP` | Número com DDI, só dígitos. Usado quando `PUBLIC_CTA_URL` está vazio. Tem padrão embutido (`5511970687422`) para o CTA não ficar morto num deploy sem variáveis | não |
 | `PUBLIC_SPONSOR_CONTACT` | E-mail ou link para empresas interessadas em patrocínio. Se vazio, o bloco some do rodapé | não |
 | `PUBLIC_GTM_ID` | Google Tag Manager (`GTM-XXXXXXX`). Se vazio, nada é carregado | não |
@@ -69,26 +69,29 @@ Flags de conteúdo ficam em [`src/config/site.ts`](src/config/site.ts):
 
 ## Ligar o checkout
 
-O checkout da temporada é este produto na EAD da ON:
+São **nove produtos** na EAD da ON: o pacote da temporada (R$ 990) e um por encontro
+avulso (R$ 250). Os links ficam em
+[`src/config/checkout.ts`](src/config/checkout.ts), não em variáveis de ambiente —
+são nove e mudam juntos, então vivem versionados.
 
+```ts
+export const checkoutTemporada = '';          // produto da temporada
+export const checkoutEncontros = {            // um por encontro
+  '01': '', '02': '', ...
+};
 ```
-https://ead.on-educacao.com.br/cart/buy/one/click/23
-```
 
-Ele ainda não está no ar, então `PUBLIC_CTA_URL` está vazia e **todos os CTAs caem para
-o WhatsApp**. Quando o link começar a funcionar, ligá-lo é uma mudança de variável, sem
-deploy de código:
+**Enquanto um link está vazio, aquele botão cai para o WhatsApp** com a mensagem certa.
+Dá para ligar um de cada vez, na ordem em que os produtos forem criados: nenhum botão
+fica morto no meio do caminho.
 
-1. Na Vercel, em **Settings → Environment Variables**, cadastre `PUBLIC_CTA_URL` com a
-   URL acima (Production, Preview e Development).
-2. **Deployments → Redeploy** no último deploy.
+Para ligar: cole a URL no campo, commit e push — a Vercel faz o resto. A variável de
+ambiente `PUBLIC_CTA_URL` continua existindo e tem precedência sobre
+`checkoutTemporada`, para quando for preciso trocar o link da temporada sem deploy.
 
-A partir daí os quatro CTAs (header, hero, barra fixa do mobile e seção de inscrição)
-passam a apontar para o checkout, e os `utm_*`, `fbclid` e `gclid` capturados na chegada
-são repassados como parâmetros dessa URL em vez de irem no fim da mensagem do WhatsApp.
-O evento `cta_click` continua igual, com a posição do botão.
-
-Para voltar ao WhatsApp a qualquer momento, basta apagar a variável e redeployar.
+Quem cria os produtos é a equipe da plataforma. O documento com o que precisa ser
+cadastrado — nome, descrição, data, preço, estoque e quando abrir cada venda — está em
+`docs/`, fora do repositório, e foi enviado separadamente.
 
 ---
 
@@ -98,15 +101,15 @@ A página vende de duas formas, e os botões refletem isso:
 
 | Botão | Destino |
 |---|---|
-| Header, hero, barra fixa do mobile e seção de inscrição | `PUBLIC_CTA_URL`; sem ela, WhatsApp com `escola.whatsappMensagem` |
-| "Quero a temporada completa" (*Como participar*) | **sempre** WhatsApp, com a mensagem da modalidade |
+| Header, hero, barra fixa do mobile e seção de inscrição | checkout da temporada; sem ele, WhatsApp com `escola.whatsappMensagem` |
+| "Quero a temporada completa" (*Como participar*) | checkout da temporada; sem ele, WhatsApp com a mensagem da modalidade |
 | "Quero um encontro" (*Como participar*) | âncora `#temporada`, para a pessoa escolher a data |
-| "Quero só este encontro" (um por encontro, em *A temporada*) | **sempre** WhatsApp, com uma mensagem distinta por data e tema |
+| "Quero só este encontro" (um por encontro, em *A temporada*) | checkout daquele encontro; sem ele, WhatsApp com uma mensagem distinta por data e tema |
 
-Os dois casos "sempre WhatsApp" existem porque são conversas, não compra direta: o
-componente [`Cta.astro`](src/components/ui/Cta.astro) aceita a prop `whatsapp` e, quando
-ela vem preenchida, ignora `PUBLIC_CTA_URL`. **Se um dia o checkout tiver um link por
-modalidade, troque a prop `whatsapp` por `href` nessas chamadas.**
+[`Cta.astro`](src/components/ui/Cta.astro) resolve o destino nesta ordem: `href`
+(âncora) → `checkout` (o link daquele botão) → `whatsapp` (a mensagem daquele botão) →
+CTA global. É isso que deixa ligar um produto de cada vez sem nunca deixar um botão
+sem destino.
 
 As oito mensagens dos encontros são geradas por `mensagemEncontroAvulso()`, em
 `content/escola.ts`, e são distintas de propósito — é o que permite ver qual tema puxa
@@ -144,6 +147,7 @@ media/
 src/
   content/escola.ts        TODO o texto e os dados. Tipado. Nenhum componente tem copy.
   config/site.ts           Links, contatos, IDs e flags, lidos de import.meta.env
+  config/checkout.ts       Os nove links de checkout da EAD (temporada + 8 encontros)
   components/sections/     Uma seção por arquivo, na ordem da página
   components/ui/           Peças pequenas: Cta, Foto, Icon, DotGrid, logos
   assets/fotos/            Derivadas de media/fotos por `npm run media`

@@ -8,9 +8,12 @@ interface Props {
   label: string;
   variant?: 'agua' | 'navy' | 'branco' | 'contorno' | 'texto';
   /**
-   * Mensagem do WhatsApp. Quando informada, o CTA vai sempre para o WhatsApp
-   * com esse texto, mesmo que PUBLIC_CTA_URL exista — é o caso dos botões de
-   * modalidade e dos encontros avulsos, que precisam de uma conversa.
+   * Link de checkout específico deste botão, vindo de `config/checkout.ts`.
+   * Quando está vazio, o CTA cai para o WhatsApp com a mensagem de `whatsapp`.
+   */
+  checkout?: string;
+  /**
+   * Mensagem do WhatsApp usada enquanto não houver checkout para este botão.
    */
   whatsapp?: string;
   /** Destino alternativo, como uma âncora para outra seção. */
@@ -21,15 +24,22 @@ const {
   position,
   label,
   variant = 'agua',
+  checkout,
   whatsapp,
   href: hrefProp,
   class: klass = '',
 } = Astro.props;
 
+// Prioridade: âncora > checkout deste botão > WhatsApp com a mensagem dada >
+// CTA global (PUBLIC_CTA_URL ou, sem ela, WhatsApp com a mensagem padrão).
+const destinoCheckout = checkout?.trim() ?? '';
 const ehAncora = Boolean(hrefProp);
-const ehWhatsapp = !ehAncora && (Boolean(whatsapp) || !site.ctaUrl);
+const ehWhatsapp = !ehAncora && !destinoCheckout && (Boolean(whatsapp) || !site.ctaUrl);
 
-const href = hrefProp ?? (whatsapp ? whatsappHref(whatsapp) : ctaHref(escola.whatsappMensagem));
+const href =
+  hrefProp ||
+  destinoCheckout ||
+  (whatsapp ? whatsappHref(whatsapp) : ctaHref(escola.whatsappMensagem));
 
 const base =
   'inline-flex items-center justify-center rounded-[4px] font-semibold transition-colors duration-150';

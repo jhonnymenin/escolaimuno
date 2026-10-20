@@ -1,5 +1,7 @@
 /** Links, contatos, IDs e flags. Tudo lido de import.meta.env. */
 
+import { checkoutTemporada } from './checkout';
+
 const env = import.meta.env;
 
 const str = (v: unknown): string => (typeof v === 'string' ? v.trim() : '');
@@ -7,8 +9,11 @@ const str = (v: unknown): string => (typeof v === 'string' ? v.trim() : '');
 export const site = {
   url: str(env.PUBLIC_SITE_URL) || 'https://escolaimunomediadas.com.br',
 
-  /** Link de inscrição. Vazio => o CTA cai para o WhatsApp. */
-  ctaUrl: str(env.PUBLIC_CTA_URL),
+  /**
+   * Link de inscrição da temporada. A variável de ambiente tem precedência
+   * sobre `checkoutTemporada`; sem nenhum dos dois, o CTA cai para o WhatsApp.
+   */
+  ctaUrl: str(env.PUBLIC_CTA_URL) || checkoutTemporada.trim(),
 
   /**
    * Número com DDI, só dígitos. O padrão existe para o CTA nunca ficar morto

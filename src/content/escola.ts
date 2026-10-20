@@ -229,7 +229,7 @@ export const escola = {
         selo: 'Recomendado',
         titulo: 'Temporada completa',
         subtitulo: '70 vagas',
-        preco: 'R$ 999',
+        preco: 'R$ 990',
         itens: [
           'Os 8 encontros da temporada',
           'Lugar garantido o ano inteiro',
@@ -399,9 +399,20 @@ export const escola = {
         nome: 'Clínica Alergológica',
         logo: 'alergologica',
         descricao:
-          'Mais de 20 anos em Campinas, com corpo clínico multiespecialidade e responsabilidade técnica do Dr. Antonio Condino-Neto (CRM 51204).',
+          'Mais de 20 anos em Campinas, com corpo clínico multiespecialidade e atendimento em alergia e imunologia.',
       },
     ] satisfies Realizador[],
+
+    coordenacao: {
+      rotulo: 'Coordenação científica',
+      nome: 'Dr. Antonio Condino-Neto',
+      crm: 'CRM 51204',
+      alt: 'Retrato do Dr. Antonio Condino-Neto',
+      paragrafos: [
+        'Diretor médico da Clínica Alergológica e do Laboratório Immunogenic, e diretor científico da Sociedade de Medicina e Cirurgia de Campinas — a casa que recebe os encontros.',
+        'Professor titular de Imunologia e Medicina Experimental pela USP e livre-docente em Alergia, Imunologia e Pneumologia Pediátrica pela Unicamp. Dirige o Centro de Imunodeficiências Primárias Jeffrey Modell, em São Paulo.',
+      ],
+    },
   },
 
   turma: {

@@ -2,6 +2,7 @@
 import Cta from '../ui/Cta.astro';
 import Icon from '../ui/Icon.astro';
 import { escola } from '../../content/escola';
+import { site } from '../../config/site';
 
 const s = escola.comoParticipar;
 ---
@@ -89,6 +90,7 @@ const s = escola.comoParticipar;
                 position={m.destaque ? 'modalidade-temporada' : 'modalidade-avulso'}
                 label={m.cta}
                 variant={m.destaque ? 'agua' : 'contorno'}
+                checkout={m.destaque ? site.ctaUrl : undefined}
                 whatsapp={m.whatsapp}
                 href={m.href}
                 class="w-full"

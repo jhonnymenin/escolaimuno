@@ -2,6 +2,7 @@
 import Icon from '../ui/Icon.astro';
 import { escola, mensagemEncontroAvulso } from '../../content/escola';
 import { whatsappHref } from '../../config/site';
+import { checkoutDoEncontro } from '../../config/checkout';
 const s = escola.temporadaSecao;
 const h = escola.horario;
 ---
@@ -39,10 +40,10 @@ const h = escola.horario;
 
               <div class="flex flex-wrap items-center gap-x-6 gap-y-2 md:col-span-3 md:flex-col md:items-end md:gap-y-2.5">
                 <a
-                  href={whatsappHref(mensagemEncontroAvulso(e))}
+                  href={checkoutDoEncontro(e.numero) || whatsappHref(mensagemEncontroAvulso(e))}
                   data-cta
                   data-cta-position={`encontro-${e.numero}`}
-                  data-cta-whatsapp="true"
+                  data-cta-whatsapp={checkoutDoEncontro(e.numero) ? 'false' : 'true'}
                   class="text-sm font-semibold text-azul-texto underline underline-offset-[5px] decoration-1 hover:decoration-2"
                 >
                   {s.avulsoCta}

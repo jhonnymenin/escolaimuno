@@ -12,13 +12,16 @@ import { basename, extname, join } from 'node:path';
 
 const FOTOS_IN = 'media/fotos';
 const LOCAL_IN = 'media/local';
+const PESSOAS_IN = 'media/pessoas';
 const LOGOS_IN = 'media/logos';
 const FOTOS_OUT = 'src/assets/fotos';
 const LOCAL_OUT = 'src/assets/local';
+const PESSOAS_OUT = 'src/assets/pessoas';
 const LOGOS_OUT = 'src/assets/logos';
 
 mkdirSync(FOTOS_OUT, { recursive: true });
 mkdirSync(LOCAL_OUT, { recursive: true });
+mkdirSync(PESSOAS_OUT, { recursive: true });
 mkdirSync(LOGOS_OUT, { recursive: true });
 
 /** Duotone: sombra -> navy quase preto, luz -> azul médio. out = d + cinza * (l - d) / 255.
@@ -114,6 +117,22 @@ for (const arquivo of readdirSync(LOCAL_IN)) {
     .toFile(join(LOCAL_OUT, `${nome}.jpg`));
 
   console.log(`local ${nome.padEnd(20)} ${info.width}x${info.height}`);
+}
+
+/**
+ * Retratos: cor natural, com a saturação quase intacta — é uma pessoa, não um
+ * elemento gráfico. Só perdem um fio para não destoar da paleta fria.
+ */
+for (const arquivo of readdirSync(PESSOAS_IN)) {
+  const nome = basename(arquivo, extname(arquivo));
+  const info = await sharp(join(PESSOAS_IN, arquivo))
+    .rotate()
+    .resize({ width: 1200, height: 1600, fit: 'inside', withoutEnlargement: true })
+    .modulate({ saturation: 0.82 })
+    .jpeg({ quality: 86, mozjpeg: true })
+    .toFile(join(PESSOAS_OUT, `${nome}.jpg`));
+
+  console.log(`retrato ${nome.padEnd(20)} ${info.width}x${info.height}`);
 }
 
 for (const arquivo of readdirSync(LOGOS_IN)) {

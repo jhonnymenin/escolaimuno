@@ -3,7 +3,9 @@ import Foto from '../ui/Foto.astro';
 import LogoRealizador from '../ui/LogoRealizador.astro';
 import { escola } from '../../content/escola';
 import foto from '../../assets/fotos/centro-cirurgico-duotone-claro.jpg';
+import retrato from '../../assets/pessoas/antonio-condino-neto.jpg';
 const s = escola.quemConduz;
+const c = s.coordenacao;
 ---
 <section id="quem-conduz" class="bg-white py-16 sm:py-24 lg:py-32">
   <div class="shell">
@@ -35,5 +37,30 @@ const s = escola.quemConduz;
         ))
       }
     </ul>
+
+    <div class="mt-12 grid grid-cols-1 gap-x-10 gap-y-8 sm:grid-cols-12 lg:mt-16 lg:gap-x-16">
+      <div class="sm:col-span-4 lg:col-span-3">
+        <Foto
+          src={retrato}
+          alt={c.alt}
+          ratio="2/3"
+          position="center 22%"
+          sizes="(min-width: 1024px) 18vw, (min-width: 640px) 28vw, 60vw"
+          widths={[260, 400, 475]}
+          class="max-w-[14rem] sm:max-w-none"
+        />
+      </div>
+
+      <div class="sm:col-span-8 lg:col-span-9 lg:self-center">
+        <p class="eyebrow text-ciano-texto">{c.rotulo}</p>
+        <h3 class="font-display mt-4 text-2xl font-bold tracking-[-0.02em] sm:text-3xl">
+          {c.nome}
+        </h3>
+        <p class="mt-1.5 text-sm text-ink2">{c.crm}</p>
+        <div class="measure-wide mt-5 space-y-4 text-ink2">
+          {c.paragrafos.map((p) => <p>{p}</p>)}
+        </div>
+      </div>
+    </div>
   </div>
 </section>
