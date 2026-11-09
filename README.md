@@ -305,3 +305,13 @@ Estado verificado nesta versão, com `npm run preview` servindo `dist/`:
 - Contraste AA em todo o texto, foco visível, um único `h1`, HTML semântico e
   `prefers-reduced-motion` respeitado — com ele ligado, a cascata do grid de 100 pontos
   e o acendimento da linha do tempo aparecem prontos, sem animação.
+
+## Books comerciais
+
+`referencias/` guarda os dois PDFs de apoio — `Book_Inscricoes` (venda para médicos) e
+`Book_Patrocinio` (captação de cotas). A pasta fica **fora do Git**: o repositório é
+público e o book de patrocínio traz valores de cota e a marcação "Documento confidencial".
+
+Os books não são gerados por este projeto — vieram impressos do Chromium e o HTML de
+origem não está versionado. Servem como referência de conteúdo: quando a landing muda,
+confira se os books continuam dizendo a mesma coisa.
