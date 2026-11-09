@@ -16,11 +16,11 @@ cp .env.example .env     # ajuste os valores
 npm run dev              # http://localhost:4321
 ```
 
-> **Build local travando?** `astro build` e `astro check` emperram quando o caminho do
-> projeto tem espaços ou acentos (hoje ele mora em `05 - Código Claude/`). A saída fica
-> vazia e o processo não consome CPU. Contorne com um atalho sem acentos:
-> `ln -sfn "$PWD" /tmp/escola-lp && cd /tmp/escola-lp && CI=1 npx astro build`.
-> A Vercel não é afetada: lá o repositório fica em um caminho limpo.
+> **Mantenha o projeto fora do iCloud.** Ele vive em `~/Developer/`. Enquanto esteve em
+> `~/Documents` — que no macOS é um link para o iCloud Drive — `astro build` e `astro check`
+> travavam sem consumir CPU e sem imprimir nada, e o iCloud chegou a duplicar um ref do git
+> (`.git/refs/heads/main 2`). Em `~/Developer` o `check` roda em segundos. Se o projeto voltar
+> para dentro do iCloud, os travamentos voltam junto.
 
 Outros comandos:
 

@@ -174,7 +174,7 @@ export const escola = {
       numero: '03',
       data: '2027-05-20',
       dataCurta: '20 mai',
-      tema: 'Psoríase',
+      tema: 'Psoríase e hidradenite supurativa',
       especialidades: ['Dermatologia', 'Reumatologia'],
       icone: 'placas',
     },
@@ -275,8 +275,8 @@ export const escola = {
     linha: [
       {
         hora: '19h00',
-        titulo: 'Credenciamento e café',
-        descricao: 'Chegada da turma e conversa antes de começar.',
+        titulo: 'Coffee de recepção',
+        descricao: 'Credenciamento, chegada da turma e conversa antes de começar.',
       },
       {
         hora: '19h20',
