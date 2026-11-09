@@ -114,74 +114,61 @@ const jsonLd = {
     <slot />
 
     <script>
-      // ——— UTM e IDs de anúncio: capturar na chegada e repassar no CTA ———
-      const CHAVE = 'ecdi:attr';
-      const CAMPOS = [
-        'utm_source',
-        'utm_medium',
-        'utm_campaign',
-        'utm_content',
-        'utm_term',
-        'fbclid',
-        'gclid',
-      ];
+      // ——— UTM do vendedor: capturar na chegada e repassar à EAD ———
+      // Guardado em localStorage para sobreviver a uma visita em outro dia.
+      // A UTM mais recente substitui a anterior.
+      const CHAVE = 'ecdi:utm';
+      const CAMPOS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+      const HOST_EAD = 'oneducacao.eadplataforma.app';
 
       const ler = (): Record<string, string> => {
         try {
-          return JSON.parse(sessionStorage.getItem(CHAVE) || '{}');
+          const bruto = JSON.parse(localStorage.getItem(CHAVE) || '{}');
+          return bruto && typeof bruto === 'object' ? bruto : {};
         } catch {
           return {};
         }
       };
 
       const capturar = (): Record<string, string> => {
-        const atual = ler();
         const params = new URLSearchParams(window.location.search);
-        let mudou = false;
+        const chegando: Record<string, string> = {};
         for (const campo of CAMPOS) {
           const v = params.get(campo);
-          if (v) {
-            atual[campo] = v;
-            mudou = true;
-          }
+          if (v) chegando[campo] = v;
         }
-        if (mudou) {
-          try {
-            sessionStorage.setItem(CHAVE, JSON.stringify(atual));
-          } catch {
-            /* modo privado */
-          }
+
+        // Uma visita nova com UTM substitui o conjunto inteiro, para não
+        // misturar o vendedor de hoje com o de uma campanha antiga.
+        if (Object.keys(chegando).length === 0) return ler();
+
+        try {
+          localStorage.setItem(CHAVE, JSON.stringify(chegando));
+        } catch {
+          /* modo privado ou armazenamento bloqueado */
         }
-        return atual;
+        return chegando;
       };
 
-      const attr = capturar();
-      const temAttr = Object.keys(attr).length > 0;
+      const utm = capturar();
+      const temUtm = Object.keys(utm).length > 0;
 
-      const origemTexto = () =>
-        Object.entries(attr)
-          .map(([k, v]) => `${k}=${v}`)
-          .join(', ');
+      // ——— Carimbar só os links da EAD ———
+      // WhatsApp e Google Maps ficam intactos.
+      const carimbar = (a: HTMLAnchorElement) => {
+        if (!temUtm) return;
+        try {
+          const url = new URL(a.href, window.location.origin);
+          if (url.hostname !== HOST_EAD) return;
+          Object.entries(utm).forEach(([k, v]) => url.searchParams.set(k, v));
+          a.href = url.toString();
+        } catch {
+          /* href relativo, como #temporada */
+        }
+      };
 
-      // ——— Reescrever os CTAs com a atribuição ———
       const ctas = document.querySelectorAll<HTMLAnchorElement>('a[data-cta]');
-      if (temAttr) {
-        ctas.forEach((a) => {
-          const isWhatsapp = a.dataset.ctaWhatsapp === 'true';
-          try {
-            const url = new URL(a.href, window.location.origin);
-            if (isWhatsapp) {
-              const base = url.searchParams.get('text') || '';
-              url.searchParams.set('text', `${base} (origem: ${origemTexto()})`);
-            } else {
-              Object.entries(attr).forEach(([k, v]) => url.searchParams.set(k, v));
-            }
-            a.href = url.toString();
-          } catch {
-            /* href relativo, como #inscricao */
-          }
-        });
-      }
+      ctas.forEach(carimbar);
 
       // ——— Evento cta_click ———
       ctas.forEach((a) => {

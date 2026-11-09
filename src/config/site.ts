@@ -1,19 +1,19 @@
 /** Links, contatos, IDs e flags. Tudo lido de import.meta.env. */
 
-import { checkoutTemporada } from './checkout';
+import { oferta } from './ofertas';
 
 const env = import.meta.env;
 
 const str = (v: unknown): string => (typeof v === 'string' ? v.trim() : '');
 
 export const site = {
-  url: str(env.PUBLIC_SITE_URL) || 'https://escolaimunomediadas.com.br',
+  url: str(env.PUBLIC_SITE_URL) || 'https://escola.on-dig.online',
 
   /**
-   * Link de inscrição da temporada. A variável de ambiente tem precedência
-   * sobre `checkoutTemporada`; sem nenhum dos dois, o CTA cai para o WhatsApp.
+   * Link de compra da temporada. A variável de ambiente tem precedência sobre
+   * a oferta de `config/ofertas.ts`, para trocar o link sem deploy.
    */
-  ctaUrl: str(env.PUBLIC_CTA_URL) || checkoutTemporada.trim(),
+  ctaUrl: str(env.PUBLIC_CTA_URL) || (oferta('temporada')?.url ?? ''),
 
   /**
    * Número com DDI, só dígitos. O padrão existe para o CTA nunca ficar morto

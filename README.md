@@ -16,6 +16,12 @@ cp .env.example .env     # ajuste os valores
 npm run dev              # http://localhost:4321
 ```
 
+> **Build local travando?** `astro build` e `astro check` emperram quando o caminho do
+> projeto tem espaços ou acentos (hoje ele mora em `05 - Código Claude/`). A saída fica
+> vazia e o processo não consome CPU. Contorne com um atalho sem acentos:
+> `ln -sfn "$PWD" /tmp/escola-lp && cd /tmp/escola-lp && CI=1 npx astro build`.
+> A Vercel não é afetada: lá o repositório fica em um caminho limpo.
+
 Outros comandos:
 
 | Comando | O que faz |
@@ -35,12 +41,12 @@ do projeto na Vercel. O arquivo de referência é [`.env.example`](.env.example)
 
 | Variável | Uso | Obrigatória |
 |---|---|---|
-| `PUBLIC_CTA_URL` | Sobrescreve o link do produto da temporada definido em `src/config/checkout.ts`. Ver *Ligar o checkout*, abaixo | não |
+| `PUBLIC_CTA_URL` | Sobrescreve o link da temporada definido em `src/config/ofertas.ts`, para trocá-lo sem deploy | não |
 | `PUBLIC_WHATSAPP` | Número com DDI, só dígitos. Usado quando `PUBLIC_CTA_URL` está vazio. Tem padrão embutido (`5511970687422`) para o CTA não ficar morto num deploy sem variáveis | não |
 | `PUBLIC_SPONSOR_CONTACT` | E-mail ou link para empresas interessadas em patrocínio. Se vazio, o bloco some do rodapé | não |
 | `PUBLIC_GTM_ID` | Google Tag Manager (`GTM-XXXXXXX`). Se vazio, nada é carregado | não |
 | `PUBLIC_META_PIXEL_ID` | Meta Pixel. Se vazio, nada é carregado | não |
-| `PUBLIC_SITE_URL` | URL final, usada em canonical, Open Graph e sitemap | sim |
+| `PUBLIC_SITE_URL` | URL final, usada em canonical, Open Graph e sitemap. Hoje `https://escola.on-dig.online`, que também é o padrão no código | sim |
 
 Flags de conteúdo ficam em [`src/config/site.ts`](src/config/site.ts):
 
@@ -67,73 +73,83 @@ Flags de conteúdo ficam em [`src/config/site.ts`](src/config/site.ts):
 
 ---
 
-## Ligar o checkout
+## As nove ofertas
 
-São **nove produtos** na EAD da ON: o pacote da temporada (R$ 990) e um por encontro
-avulso (R$ 250). Os links ficam em
-[`src/config/checkout.ts`](src/config/checkout.ts), não em variáveis de ambiente —
-são nove e mudam juntos, então vivem versionados.
+Todas já estão à venda na EAD Plataforma. Os links ficam em um lugar só,
+[`src/config/ofertas.ts`](src/config/ofertas.ts) — não há URL de compra escrita em
+nenhum componente.
 
-```ts
-export const checkoutTemporada = '';          // produto da temporada
-export const checkoutEncontros = {            // um por encontro
-  '01': '', '02': '', ...
-};
-```
+| Oferta | Produto | Vendas encerram |
+|---|---|---|
+| Temporada completa (R$ 990) | `/23` | não encerra |
+| Encontro 01 — 18/03/2027 | `/24` | 18/03/2027 19:00 |
+| Encontro 02 — 15/04/2027 | `/26` | 15/04/2027 19:00 |
+| Encontro 03 — 20/05/2027 | `/27` | 20/05/2027 19:00 |
+| Encontro 04 — 17/06/2027 | `/28` | 17/06/2027 19:00 |
+| Encontro 05 — 19/08/2027 | `/29` | 19/08/2027 19:00 |
+| Encontro 06 — 16/09/2027 | `/30` | 16/09/2027 19:00 |
+| Encontro 07 — 21/10/2027 | `/31` | 21/10/2027 19:00 |
+| Encontro 08 — 11/11/2027 | `/32` | 11/11/2027 19:00 |
 
-**Enquanto um link está vazio, aquele botão cai para o WhatsApp** com a mensagem certa.
-Dá para ligar um de cada vez, na ordem em que os produtos forem criados: nenhum botão
-fica morto no meio do caminho.
+Base: `https://oneducacao.eadplataforma.app/cart/buy/one/click`. Horários de Brasília.
+Repare que o produto 25 não existe — a numeração pula.
 
-Para ligar: cole a URL no campo, commit e push — a Vercel faz o resto. A variável de
-ambiente `PUBLIC_CTA_URL` continua existindo e tem precedência sobre
-`checkoutTemporada`, para quando for preciso trocar o link da temporada sem deploy.
+### Encontro já realizado
 
-Quem cria os produtos é a equipe da plataforma. O documento com o que precisa ser
-cadastrado — nome, descrição, data, preço, estoque e quando abrir cada venda — está em
-`docs/`, fora do repositório, e foi enviado separadamente.
+A EAD encerra a venda de cada encontro às 19h do próprio dia; depois disso o link abre
+um carrinho vazio. A página calcula isso **no navegador**, inclusive no carregamento
+inicial, e o encontro passado fica apagado, sem botão, com o texto "Encontro realizado".
+
+O `vendasAte` de cada oferta é um ISO com o fuso `-03:00`, então o script compara
+instantes e o relógio do visitante não interfere. A temporada não tem prazo e fica
+sempre ativa.
+
+Para testar antes da data, finja o relógio no DevTools ou rode a página com uma data
+fixa. O ponto de corte do Encontro 01 é `2027-03-18T19:00:00-03:00`.
 
 ---
 
-## Modalidades e CTAs
-
-A página vende de duas formas, e os botões refletem isso:
+## Para onde vai cada botão
 
 | Botão | Destino |
 |---|---|
-| Header, hero, barra fixa do mobile e seção de inscrição | checkout da temporada; sem ele, WhatsApp com `escola.whatsappMensagem` |
-| "Quero a temporada completa" (*Como participar*) | checkout da temporada; sem ele, WhatsApp com a mensagem da modalidade |
+| Header, hero, barra fixa do mobile e "Quero me inscrever" (seção final) | produto da temporada |
+| "Quero a temporada completa" (*Como participar*) | produto da temporada |
 | "Quero um encontro" (*Como participar*) | âncora `#temporada`, para a pessoa escolher a data |
-| "Quero só este encontro" (um por encontro, em *A temporada*) | checkout daquele encontro; sem ele, WhatsApp com uma mensagem distinta por data e tema |
+| "Quero só este encontro" (um por encontro) | produto daquele encontro |
+| "Tirar dúvidas no WhatsApp" e "Falar no WhatsApp" (rodapé) | WhatsApp |
+
+O WhatsApp é canal secundário: fica perto das opções de compra e no rodapé, e não
+aparece mais em nenhum botão de inscrição. A migração de avulso para temporada é feita
+manualmente pela equipe, por isso o bloco "Mudou de ideia" aponta para o WhatsApp.
 
 [`Cta.astro`](src/components/ui/Cta.astro) resolve o destino nesta ordem: `href`
 (âncora) → `checkout` (o link daquele botão) → `whatsapp` (a mensagem daquele botão) →
-CTA global. É isso que deixa ligar um produto de cada vez sem nunca deixar um botão
-sem destino.
-
-As oito mensagens dos encontros são geradas por `mensagemEncontroAvulso()`, em
-`content/escola.ts`, e são distintas de propósito — é o que permite ver qual tema puxa
-mais lead. Cada uma dispara `cta_click` com `cta_position` = `encontro-01` … `encontro-08`;
-os cards de modalidade usam `modalidade-temporada` e `modalidade-avulso`.
-
-**Os preços aparecem só na seção *Como participar*.** Não repita no hero nem no CTA final.
+CTA global. A prioridade existe para que um link faltando nunca deixe um botão sem
+destino.
 
 ---
 
-## CTA, atribuição e tracking
+## UTM por vendedor
 
-- O CTA usa `PUBLIC_CTA_URL`. Sem ela, abre `wa.me/{PUBLIC_WHATSAPP}` com a mensagem
-  definida em `escola.whatsappMensagem`.
-- Na chegada, `utm_*`, `fbclid` e `gclid` são capturados e guardados em `sessionStorage`.
-  No link de inscrição eles voltam como parâmetros de URL; no WhatsApp, a origem é
-  acrescentada ao fim da mensagem.
-- Todo clique dispara `cta_click` com a posição (`hero`, `header`, `sticky`, `final`)
-  no `dataLayer` e no Pixel.
-- GTM e Pixel só são injetados se as variáveis existirem, e de forma adiada: na primeira
-  interação (`pointerdown`, `keydown`, `scroll`, `touchstart`) ou após 3s.
+Cada vendedor divulga a landing com as próprias UTMs:
 
-O link **Adicionar à agenda** de cada encontro gera um `.ics` no próprio navegador
-(19h–21h30, `America/Sao_Paulo`, na SMCC). Nada sai do cliente.
+```
+https://escola.on-dig.online/?utm_source=maria&utm_medium=comercial&utm_campaign=escola-imuno-2027
+```
+
+Na chegada, `utm_source`, `utm_medium`, `utm_campaign`, `utm_term` e `utm_content` são
+lidos da URL e guardados em `localStorage` (chave `ecdi:utm`, sempre em `try/catch`).
+Ficam valendo se a pessoa navegar ou voltar outro dia, e **uma visita nova com UTM
+substitui o conjunto inteiro** — para não misturar o vendedor de hoje com o de uma
+campanha antiga.
+
+Os valores salvos são acrescentados, via `URL`/`URLSearchParams`, **só aos links do
+host `oneducacao.eadplataforma.app`**. WhatsApp e Google Maps ficam intactos.
+
+Independente disso, todo clique em CTA dispara `cta_click` no `dataLayer` e no Pixel,
+com a posição do botão (`hero`, `final`, `modalidade-temporada`, `encontro-01` …
+`encontro-08`), o que permite ver qual tema puxa mais lead.
 
 ---
 
@@ -147,7 +163,7 @@ media/
 src/
   content/escola.ts        TODO o texto e os dados. Tipado. Nenhum componente tem copy.
   config/site.ts           Links, contatos, IDs e flags, lidos de import.meta.env
-  config/checkout.ts       Os nove links de checkout da EAD (temporada + 8 encontros)
+  config/ofertas.ts        As nove ofertas da EAD: link e prazo de venda de cada uma
   components/sections/     Uma seção por arquivo, na ordem da página
   components/ui/           Peças pequenas: Cta, Foto, Icon, DotGrid, logos
   assets/fotos/            Derivadas de media/fotos por `npm run media`
@@ -273,11 +289,16 @@ o lugar é `content/escola.ts`.
 
 Estado verificado nesta versão, com `npm run preview` servindo `dist/`:
 
-- Lighthouse: **99/100/100/100** em mobile e **100/100/100/100** em desktop
-  (performance, acessibilidade, boas práticas, SEO).
-- Sem erros de console; build e `astro check` limpos.
+- Lighthouse: **99/100/100/100** em mobile (performance, acessibilidade, boas
+  práticas, SEO).
+- Sem erros de console; build limpo.
 - Conferido em 375px, 768px, 1024px e 1440px, sem rolagem horizontal em nenhum.
-- As oito mensagens de WhatsApp por encontro são distintas e com encode correto.
+- Os nove botões de compra levam ao produto certo da EAD, conferido contra a tabela
+  de ofertas.
+- Com `?utm_source=teste`, os links da EAD saem com `utm_source=teste`, inclusive
+  depois de recarregar a página sem o parâmetro; WhatsApp e Maps ficam intactos.
+- Simulando o relógio depois de 18/03/2027 19:00, o Encontro 01 mostra
+  "Encontro realizado" e perde o botão; os outros sete seguem ativos.
 - O mapa do Google é um iframe de terceiro e só é montado quando a seção *O lugar*
   chega perto da tela, então não entra no carregamento inicial. Sem JavaScript, o
   bloco fica com o nome da casa e o link para o Google Maps.

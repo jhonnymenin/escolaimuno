@@ -2,7 +2,7 @@
 import LogosRealizadores from '../ui/LogosRealizadores.astro';
 import LogoEscola from '../ui/LogoEscola.astro';
 import { escola } from '../../content/escola';
-import { site, sponsorHref } from '../../config/site';
+import { site, sponsorHref, whatsappHref } from '../../config/site';
 const s = escola.rodape;
 const href = sponsorHref();
 ---
@@ -13,21 +13,37 @@ const href = sponsorHref();
         <LogosRealizadores label={s.realizacao} />
       </div>
 
-      {
-        site.sponsorContact && (
-          <div class="lg:col-span-5">
-            <h2 class="font-display text-base font-bold tracking-[-0.01em]">{s.patrocinioTitulo}</h2>
-            <p class="mt-2 text-[0.95rem] text-ink2">
-              <a
-                href={href}
-                class="font-semibold text-azul-texto underline underline-offset-[5px] decoration-1 hover:decoration-2"
-              >
-                {s.patrocinioTexto}
-              </a>
-            </p>
-          </div>
-        )
-      }
+      <div class="grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2 lg:col-span-5">
+        <div>
+          <h2 class="font-display text-base font-bold tracking-[-0.01em]">{s.duvidasTitulo}</h2>
+          <p class="mt-2 text-[0.95rem] text-ink2">
+            <a
+              href={whatsappHref(escola.whatsappDuvidas)}
+              class="font-semibold text-azul-texto underline underline-offset-[5px] decoration-1 hover:decoration-2"
+            >
+              {s.duvidasCta}
+            </a>
+          </p>
+        </div>
+
+        {
+          site.sponsorContact && (
+            <div>
+              <h2 class="font-display text-base font-bold tracking-[-0.01em]">
+                {s.patrocinioTitulo}
+              </h2>
+              <p class="mt-2 text-[0.95rem] text-ink2">
+                <a
+                  href={href}
+                  class="font-semibold text-azul-texto underline underline-offset-[5px] decoration-1 hover:decoration-2"
+                >
+                  {s.patrocinioTexto}
+                </a>
+              </p>
+            </div>
+          )
+        }
+      </div>
     </div>
 
     <div

@@ -1,6 +1,6 @@
 ---
 import { escola } from '../../content/escola';
-import { ctaHref, whatsappHref, site } from '../../config/site';
+import { ctaHref, whatsappHref } from '../../config/site';
 
 interface Props {
   /** Posição, enviada no evento cta_click. */
@@ -8,7 +8,7 @@ interface Props {
   label: string;
   variant?: 'agua' | 'navy' | 'branco' | 'contorno' | 'texto';
   /**
-   * Link de checkout específico deste botão, vindo de `config/checkout.ts`.
+   * Link de compra específico deste botão, vindo de `config/ofertas.ts`.
    * Quando está vazio, o CTA cai para o WhatsApp com a mensagem de `whatsapp`.
    */
   checkout?: string;
@@ -30,11 +30,9 @@ const {
   class: klass = '',
 } = Astro.props;
 
-// Prioridade: âncora > checkout deste botão > WhatsApp com a mensagem dada >
-// CTA global (PUBLIC_CTA_URL ou, sem ela, WhatsApp com a mensagem padrão).
+// Prioridade: âncora > link deste botão > WhatsApp com a mensagem dada >
+// CTA global (a oferta da temporada ou, sem ela, WhatsApp com a mensagem padrão).
 const destinoCheckout = checkout?.trim() ?? '';
-const ehAncora = Boolean(hrefProp);
-const ehWhatsapp = !ehAncora && !destinoCheckout && (Boolean(whatsapp) || !site.ctaUrl);
 
 const href =
   hrefProp ||
@@ -56,7 +54,6 @@ const estilos = {
   href={href}
   data-cta
   data-cta-position={position}
-  data-cta-whatsapp={ehWhatsapp ? 'true' : 'false'}
   class={`${base} ${estilos[variant]} ${klass}`}
 >
   {label}

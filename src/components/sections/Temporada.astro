@@ -2,7 +2,7 @@
 import Icon from '../ui/Icon.astro';
 import { escola, mensagemEncontroAvulso } from '../../content/escola';
 import { whatsappHref } from '../../config/site';
-import { checkoutDoEncontro } from '../../config/checkout';
+import { oferta } from '../../config/ofertas';
 const s = escola.temporadaSecao;
 const h = escola.horario;
 ---
@@ -17,9 +17,9 @@ const h = escola.horario;
     <ol class="mt-12 border-t border-line lg:mt-16">
       {
         escola.encontros.map((e) => (
-          <li class="border-b border-line">
+          <li class="encontro border-b border-line" data-vendas-ate={oferta(e.numero)?.vendasAte}>
             <div class="grid grid-cols-1 items-start gap-x-6 gap-y-3 py-6 md:grid-cols-12 md:items-center md:gap-x-8 md:py-8">
-              <div class="flex items-baseline gap-3 md:col-span-3 md:gap-4 lg:col-span-2">
+              <div class="data flex items-baseline gap-3 transition-opacity md:col-span-3 md:gap-4 lg:col-span-2">
                 <span class="font-display text-xs font-semibold tabular-nums tracking-[0.12em] text-ink2">
                   {e.numero}
                 </span>
@@ -28,8 +28,8 @@ const h = escola.horario;
                 </span>
               </div>
 
-              <div class="flex items-start gap-4 md:col-span-6 lg:col-span-7">
-                <Icon name={e.icone} size={30} class="mt-0.5 flex-none text-ciano-texto" />
+              <div class="tema flex items-start gap-4 transition-opacity md:col-span-6 lg:col-span-7">
+                <Icon name={e.icone} size={30} class="icone mt-0.5 flex-none text-ciano-texto transition-opacity" />
                 <div>
                   <h3 class="font-display text-lg font-bold leading-tight tracking-[-0.01em] sm:text-xl">
                     {e.tema}
@@ -40,15 +40,16 @@ const h = escola.horario;
 
               <div class="flex flex-wrap items-center gap-x-6 gap-y-2 md:col-span-3 md:flex-col md:items-end md:gap-y-2.5">
                 <a
-                  href={checkoutDoEncontro(e.numero) || whatsappHref(mensagemEncontroAvulso(e))}
+                  href={oferta(e.numero)?.url || whatsappHref(mensagemEncontroAvulso(e))}
                   data-cta
+                  data-compra
                   data-cta-position={`encontro-${e.numero}`}
-                  data-cta-whatsapp={checkoutDoEncontro(e.numero) ? 'false' : 'true'}
                   class="text-sm font-semibold text-azul-texto underline underline-offset-[5px] decoration-1 hover:decoration-2"
                 >
                   {s.avulsoCta}
                   <span class="sr-only"> — {e.dataCurta}, {e.tema}</span>
                 </a>
+                <p class="realizado hidden text-sm font-semibold text-ink2">{s.realizado}</p>
                 <button
                   type="button"
                   class="text-sm text-ink2 underline underline-offset-[5px] decoration-1 hover:decoration-2"
@@ -73,6 +74,40 @@ const h = escola.horario;
     </div>
   </div>
 </section>
+
+<style>
+  /* Encontro cuja venda já encerrou: fica apagado e perde o botão de compra. */
+  .encontro.is-realizado .tema,
+  .encontro.is-realizado .data {
+    opacity: 0.45;
+  }
+  .encontro.is-realizado [data-compra] {
+    display: none;
+  }
+  .encontro.is-realizado .realizado {
+    display: block;
+  }
+</style>
+
+<script>
+  // A venda de cada encontro encerra às 19h do próprio dia, horário de
+  // Brasília. O ISO em data-vendas-ate já carrega o fuso -03:00, então basta
+  // comparar instantes — o relógio do visitante não interfere.
+  const marcarRealizados = () => {
+    const agora = Date.now();
+    document.querySelectorAll<HTMLElement>('.encontro[data-vendas-ate]').forEach((li) => {
+      const ate = Date.parse(li.dataset.vendasAte || '');
+      if (Number.isNaN(ate)) return;
+      li.classList.toggle('is-realizado', agora >= ate);
+    });
+  };
+
+  marcarRealizados();
+  // Reavalia ao voltar para a aba, para o caso de a página ficar aberta.
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) marcarRealizados();
+  });
+</script>
 
 <script
   define:vars={{

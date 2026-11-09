@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://escolaimunomediadas.com.br/sitemap-index.xml
+Sitemap: https://escola.on-dig.online/sitemap-index.xml

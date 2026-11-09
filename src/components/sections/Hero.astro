@@ -56,9 +56,14 @@ import foto from '../../assets/fotos/vacinacao-duotone.jpg';
         }
       </dl>
 
-      <div class="mt-10 flex flex-col items-start gap-4 sm:mt-11 sm:flex-row sm:items-center sm:gap-7">
-        <Cta position="hero" label={escola.hero.cta} variant="agua" class="w-full sm:w-auto" />
-        <p class="max-w-[17rem] text-sm leading-snug text-white/65">{escola.hero.ctaNota}</p>
+      <div class="mt-10 flex flex-col items-start gap-4 sm:mt-11 sm:flex-row sm:items-start sm:gap-7">
+        <div class="w-full sm:w-auto">
+          <Cta position="hero" label={escola.hero.cta} variant="agua" class="w-full sm:w-auto" />
+          <p class="mt-2.5 text-center text-[0.8rem] text-white/65 sm:text-left">
+            {escola.hero.ctaPagamento}
+          </p>
+        </div>
+        <p class="max-w-[17rem] text-sm leading-snug text-white/65 sm:pt-4">{escola.hero.ctaNota}</p>
       </div>
     </div>
 

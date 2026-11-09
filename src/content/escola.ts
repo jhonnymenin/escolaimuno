@@ -110,6 +110,7 @@ export const escola = {
     ],
     cta: 'Garantir minha vaga',
     ctaNota: 'Sempre às quintas, 19h, na APM Campinas.',
+    ctaPagamento: 'Inscrição online · Pix, boleto ou cartão',
     realizacao: 'Uma realização',
   },
 
@@ -146,6 +147,7 @@ export const escola = {
       'Cada evento é dedicado a um grupo de doenças, com caso clínico, discussão dirigida e atualização científica com especialista convidado.',
     agendaCta: 'Adicionar à agenda',
     avulsoCta: 'Quero só este encontro',
+    realizado: 'Encontro realizado',
     rodape:
       'Sempre às quintas-feiras, 19h, na APM Campinas — Rua Delfino Cintra, 63, Centro.',
     selo: '100% presencial',
@@ -250,8 +252,7 @@ export const escola = {
         itens: [
           'Um encontro, à sua escolha',
           'Certificado daquele encontro',
-          'Vagas liberadas 45 dias antes',
-          'Sujeito à disponibilidade',
+          'Sujeito à disponibilidade (30 vagas por encontro)',
         ],
         cta: 'Quero um encontro',
         href: '#temporada',
@@ -261,8 +262,9 @@ export const escola = {
     migracao: {
       titulo: 'Mudou de ideia depois do primeiro encontro?',
       texto:
-        'Quem entra por um encontro avulso pode migrar para a temporada completa em até 30 dias, abatendo o valor já pago. O certificado da temporada é emitido apenas para quem participa dos oito encontros.',
+        'Quem entra por um encontro avulso pode migrar para a temporada completa em até 30 dias, abatendo o valor já pago. O certificado da temporada é emitido apenas para quem participa dos oito encontros. Fale com a equipe pelo WhatsApp para fazer a migração.',
     },
+    duvidasCta: 'Tirar dúvidas no WhatsApp',
   },
 
   comoE: {
@@ -459,18 +461,19 @@ export const escola = {
     passos: [
       {
         numero: '01',
-        titulo: 'Entre em contato',
-        descricao: 'Fale com a equipe da ON Educação e receba as condições da turma.',
+        titulo: 'Escolha a modalidade',
+        descricao: 'A temporada completa ou o encontro da sua área.',
       },
       {
         numero: '02',
-        titulo: 'Confirme a inscrição',
-        descricao: 'A vaga é reservada em seu nome na modalidade que você escolher.',
+        titulo: 'Pague online',
+        descricao:
+          'Pix, boleto ou cartão. A temporada sai em até 8x e o encontro avulso em até 12x no cartão.',
       },
       {
         numero: '03',
-        titulo: 'Nos vemos em 18 de março',
-        descricao: 'Primeiro encontro da temporada, 19h, na APM Campinas.',
+        titulo: 'Receba a confirmação',
+        descricao: 'Por e-mail, com o acesso à plataforma EAD.',
       },
     ],
     cta: 'Quero me inscrever',
@@ -478,6 +481,8 @@ export const escola = {
 
   rodape: {
     realizacao: 'Uma realização',
+    duvidasTitulo: 'Dúvidas sobre a inscrição?',
+    duvidasCta: 'Falar no WhatsApp',
     patrocinioTitulo: 'Sua empresa na Escola?',
     patrocinioTexto: 'Fale com a equipe comercial',
     local: 'Campinas/SP, temporada 2027',
@@ -487,6 +492,10 @@ export const escola = {
 
   whatsappMensagem:
     'Olá, quero me inscrever na Escola Continuada de Doenças Imunomediadas 2027.',
+
+  /** Mensagem do canal secundário de dúvidas, que não leva ao checkout. */
+  whatsappDuvidas:
+    'Olá, tenho uma dúvida sobre a Escola Continuada de Doenças Imunomediadas 2027.',
 } as const;
 
 /**
