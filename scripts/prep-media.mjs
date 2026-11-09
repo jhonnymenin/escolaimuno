@@ -7,13 +7,14 @@
  * - logos: recortadas na transparência + variante branca para uso sobre navy
  */
 import sharp from 'sharp';
-import { mkdirSync, readdirSync } from 'node:fs';
+import { mkdirSync, readdirSync, existsSync } from 'node:fs';
 import { basename, extname, join } from 'node:path';
 
 const FOTOS_IN = 'media/fotos';
 const LOCAL_IN = 'media/local';
 const PESSOAS_IN = 'media/pessoas';
 const LOGOS_IN = 'media/logos';
+const LOGOS_ESCURAS_IN = 'media/logos-fundo-escuro';
 const FOTOS_OUT = 'src/assets/fotos';
 const LOCAL_OUT = 'src/assets/local';
 const PESSOAS_OUT = 'src/assets/pessoas';
@@ -47,44 +48,12 @@ const MAX = 2200;
 const MAX_LOGO = 1400;
 
 /**
- * A logo da Alergológica veio na versão para fundo escuro: a palavra
- * "Alergológica" é um verde quase branco que some no branco. Para a versão de
- * fundo claro, só os pixels claros da área do texto viram verde escuro — o
- * símbolo e a palavra "saúde" ficam exatamente como estão.
- *
- * `aPartirDe` é a fração da largura em que o texto começa, medida no original.
+ * Algumas marcas entregam duas artes: uma para fundo claro e outra para fundo
+ * escuro. Quando existe `media/logos-fundo-escuro/<nome>.png`, essa arte vira
+ * a variante `-branco` tal como o dono da marca desenhou. Para as demais, a
+ * variante é a silhueta da logo pintada de branco.
  */
-const RECOLORIR = {
-  'clinica-alergologica': { aPartirDe: 0.318, acimaDe: 190, para: [27, 79, 75] },
-};
-
-/**
- * O símbolo da Alergológica é feito de pétalas translúcidas sobrepostas. Uma
- * versão branca chapada viraria uma mancha, então nessas marcas o branco é
- * modulado pelo brilho do pixel: o que era claro fica opaco, o que era escuro
- * fica translúcido, e o desenho continua legível sobre navy.
- */
-const BRANCO_COM_RELEVO = new Set(['clinica-alergologica']);
-
-/** Repinta os pixels claros de uma faixa da imagem, preservando o alfa. */
-const repintar = async (buffer, regra) => {
-  const img = sharp(buffer).ensureAlpha();
-  const { data, info } = await img.raw().toBuffer({ resolveWithObject: true });
-  const { width, height, channels } = info;
-  const inicio = Math.round(width * regra.aPartirDe);
-
-  for (let y = 0; y < height; y += 1) {
-    for (let x = inicio; x < width; x += 1) {
-      const i = (y * width + x) * channels;
-      if (data[i + 3] === 0) continue;
-      const lum = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
-      if (lum <= regra.acimaDe) continue;
-      [data[i], data[i + 1], data[i + 2]] = regra.para;
-    }
-  }
-
-  return sharp(data, { raw: { width, height, channels } }).png({ compressionLevel: 9 }).toBuffer();
-};
+const temArteEscura = (nome) => existsSync(join(LOGOS_ESCURAS_IN, `${nome}.png`));
 
 for (const arquivo of readdirSync(FOTOS_IN)) {
   const nome = basename(arquivo, extname(arquivo));
@@ -146,34 +115,28 @@ for (const arquivo of readdirSync(LOGOS_IN)) {
     .png()
     .toBuffer();
 
-  const regra = RECOLORIR[nome];
-  const paraFundoClaro = regra ? await repintar(recortada, regra) : recortada;
-  const info = await sharp(paraFundoClaro).png({ compressionLevel: 9 }).toFile(join(LOGOS_OUT, `${nome}.png`));
+  const info = await sharp(recortada).png({ compressionLevel: 9 }).toFile(join(LOGOS_OUT, `${nome}.png`));
 
-  // Variante branca: mantém o recorte (alfa) e pinta tudo de branco.
-  const { width, height } = await sharp(recortada).metadata();
-  let alfa = await sharp(recortada).extractChannel('alpha').raw().toBuffer();
-
-  if (BRANCO_COM_RELEVO.has(nome)) {
-    const { data, info } = await sharp(recortada)
+  if (temArteEscura(nome)) {
+    // A marca entregou a arte de fundo escuro: usa como veio, só recortada.
+    await sharp(join(LOGOS_ESCURAS_IN, `${nome}.png`))
       .ensureAlpha()
-      .raw()
-      .toBuffer({ resolveWithObject: true });
-    const canais = info.channels;
-    const modulado = Buffer.alloc(width * height);
-    for (let i = 0; i < width * height; i += 1) {
-      const j = i * canais;
-      const lum = (0.2126 * data[j] + 0.7152 * data[j + 1] + 0.0722 * data[j + 2]) / 255;
-      const fator = Math.min(1, 0.6 + 0.45 * lum);
-      modulado[i] = Math.round(data[j + 3] * fator);
-    }
-    alfa = modulado; // já está em raw, 1 canal
+      .trim({ threshold: 1 })
+      .resize({ width: MAX_LOGO, fit: 'inside', withoutEnlargement: true })
+      .png({ compressionLevel: 9 })
+      .toFile(join(LOGOS_OUT, `${nome}-branco.png`));
+  } else {
+    // Sem arte própria: a silhueta da logo pintada de branco.
+    const { width, height } = await sharp(recortada).metadata();
+    const alfa = await sharp(recortada).extractChannel('alpha').raw().toBuffer();
+
+    await sharp({ create: { width, height, channels: 3, background: '#ffffff' } })
+      .joinChannel(alfa, { raw: { width, height, channels: 1 } })
+      .png({ compressionLevel: 9 })
+      .toFile(join(LOGOS_OUT, `${nome}-branco.png`));
   }
 
-  await sharp({ create: { width, height, channels: 3, background: '#ffffff' } })
-    .joinChannel(alfa, { raw: { width, height, channels: 1 } })
-    .png({ compressionLevel: 9 })
-    .toFile(join(LOGOS_OUT, `${nome}-branco.png`));
-
-  console.log(`logo  ${nome.padEnd(20)} ${info.width}x${info.height}  cor + branco`);
+  console.log(
+    `logo  ${nome.padEnd(20)} ${info.width}x${info.height}  cor + ${temArteEscura(nome) ? 'arte escura da marca' : 'silhueta branca'}`
+  );
 }

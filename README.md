@@ -30,7 +30,15 @@ Outros comandos:
 | `npm run preview` | Serve `dist/` localmente |
 | `npm run check` | Checagem de tipos dos arquivos `.astro` |
 | `npm run media` | Regera `src/assets/` a partir dos originais em `media/` |
+
 | `npm run og` | Regera `src/assets/img/og.jpg` e `public/favicon.svg` |
+
+> **Logos em duas artes.** `media/logos/` guarda a versão para fundo claro. Quando a marca
+> também entrega uma arte própria para fundo escuro, ela vai em `media/logos-fundo-escuro/`
+> com o mesmo nome de arquivo, e `npm run media` usa essa arte como a variante `-branco`.
+> É o caso da Alergológica saúde, cujo símbolo é feito de pétalas translúcidas: pintar a
+> silhueta de branco viraria uma mancha. Sem arte escura, a variante continua sendo a
+> silhueta branca da logo.
 
 ---
 
